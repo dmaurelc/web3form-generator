@@ -42,7 +42,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     id: `campo_${Date.now()}`,
     type,
     label: `Nuevo campo ${type}`,
-    name: `campo_${Date.now()}`,
+    name: `${type}`,
     placeholder: '',
     required: false,
     options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
@@ -112,7 +112,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
           </Select>
         </div>
         <div>
-          <h3 className="text-lg font-medium mb-2">Agregar Campos</h3>
+          <h3 className="text-lg font-medium mb-2">Campos</h3>
           <div className="grid grid-cols-3 gap-2">
             {fieldTypes.map((field) => (
               <div
@@ -134,7 +134,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
           </div>
         </div>
         <div>
-          <h3 className="text-lg font-medium mb-2">Agregar Secciones</h3>
+          <h3 className="text-lg font-medium mb-2">Columnas</h3>
           <div className="grid grid-cols-2 gap-2">
             {[1, 2, 3, 4].map((columns) => (
               <Button 

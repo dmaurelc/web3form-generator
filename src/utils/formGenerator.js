@@ -1,10 +1,11 @@
 export const generateFormCode = (formConfig) => {
   const { formType, fields, style } = formConfig;
 
-  const generateFieldHtml = (field) => {
+  const generateFieldHtml = (field, index) => {
     const { type, label, name, placeholder, required, content } = field;
     const className = style === 'tailwind' ? 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
     const requiredAttr = required ? 'required' : '';
+    const fieldName = generateUniqueName(name, index);
     
     switch (type) {
       case 'text':
@@ -15,22 +16,22 @@ export const generateFormCode = (formConfig) => {
       case 'date':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
-            <input type="${type}" id="${name}" name="${name}" placeholder="${placeholder}" class="${className}" ${requiredAttr}>
+            <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <input type="${type}" id="${fieldName}" name="${fieldName}" placeholder="${placeholder}" class="${className}" ${requiredAttr}>
           </div>
         `;
       case 'textarea':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
-            <textarea id="${name}" name="${name}" rows="3" class="${className}" placeholder="${placeholder}" ${requiredAttr}></textarea>
+            <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <textarea id="${fieldName}" name="${fieldName}" rows="3" class="${className}" placeholder="${placeholder}" ${requiredAttr}></textarea>
           </div>
         `;
       case 'select':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
-            <select id="${name}" name="${name}" class="${className}" ${requiredAttr}>
+            <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <select id="${fieldName}" name="${fieldName}" class="${className}" ${requiredAttr}>
               <option value="">Selecciona una opción</option>
               ${field.options.map(option => `<option value="${option}">${option}</option>`).join('\n')}
             </select>
@@ -41,10 +42,10 @@ export const generateFormCode = (formConfig) => {
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
             <span class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</span>
-            ${field.options.map(option => `
+            ${field.options.map((option, optionIndex) => `
               <div class="${style === 'tailwind' ? 'flex items-center' : 'formulario__opcion'}">
-                <input type="${type}" id="${name}_${option}" name="${name}" value="${option}" class="${className}" ${requiredAttr}>
-                <label for="${name}_${option}" class="${style === 'tailwind' ? 'ml-2 block text-sm text-gray-900' : 'formulario__opcion-etiqueta'}">${option}</label>
+                <input type="${type}" id="${fieldName}_${optionIndex}" name="${fieldName}" value="${option}" class="${className}" ${requiredAttr}>
+                <label for="${fieldName}_${optionIndex}" class="${style === 'tailwind' ? 'ml-2 block text-sm text-gray-900' : 'formulario__opcion-etiqueta'}">${option}</label>
               </div>
             `).join('\n')}
           </div>
@@ -52,14 +53,14 @@ export const generateFormCode = (formConfig) => {
       case 'file':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
-            <input type="file" id="${name}" name="${name}" class="${className}" ${requiredAttr}>
+            <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <input type="file" id="${fieldName}" name="${fieldName}" class="${className}" ${requiredAttr}>
           </div>
         `;
       case 'button':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <button type="button" class="${style === 'tailwind' ? 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' : 'formulario__boton'}">${label}</button>
+            <button type="submit" class="${style === 'tailwind' ? 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' : 'formulario__boton'}">${label}</button>
           </div>
         `;
       case 'html':
@@ -73,10 +74,14 @@ export const generateFormCode = (formConfig) => {
     }
   };
 
+  const generateUniqueName = (baseName, index) => {
+    return index === 0 ? baseName : `${baseName}-${index}`;
+  };
+
   const formFields = fields.map(section => 
     `<div class="${style === 'tailwind' ? `grid grid-cols-${section.columns} gap-4` : `formulario__seccion formulario__seccion--${section.columns}-columnas`}">
       ${section.fields.map(column => 
-        column.map(generateFieldHtml).join('')
+        column.map((field, index) => generateFieldHtml(field, index)).join('')
       ).join('')}
     </div>`
   ).join('');
@@ -85,11 +90,6 @@ export const generateFormCode = (formConfig) => {
     <form action="https://api.web3forms.com/submit" method="POST" class="${style === 'tailwind' ? 'space-y-6' : 'formulario'}">
       <input type="hidden" name="access_key" value="TU_CLAVE_DE_ACCESO_AQUI">
       ${formFields}
-      <div>
-        <button type="submit" class="${style === 'tailwind' ? 'w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' : 'formulario__enviar'}">
-          Enviar
-        </button>
-      </div>
     </form>
   `;
 
@@ -145,8 +145,7 @@ export const generateFormCSS = (formConfig) => {
       margin-left: 5px;
     }
 
-    .formulario__boton,
-    .formulario__enviar {
+    .formulario__boton {
       width: 100%;
       padding: 10px;
       background-color: #4a90e2;
@@ -157,8 +156,7 @@ export const generateFormCSS = (formConfig) => {
       cursor: pointer;
     }
 
-    .formulario__boton:hover,
-    .formulario__enviar:hover {
+    .formulario__boton:hover {
       background-color: #357ae8;
     }
 
