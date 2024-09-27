@@ -151,7 +151,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         </div>
         <div>
           <h3 className="text-lg font-medium mb-2">Campos</h3>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {fieldTypes.map((field) => (
               <div
                 key={field.type}

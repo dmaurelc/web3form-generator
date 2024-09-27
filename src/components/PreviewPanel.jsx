@@ -92,15 +92,19 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     const updatedFields = formConfig.fields.map(section => {
       if (section.id === sectionId) {
         const newColumns = Math.max(1, Math.min(4, section.columns + adjustment));
-        let newFields = Array(newColumns).fill().map((_, i) => section.fields[i] || []);
+        let newFields = [...section.fields];
         
-        // Reorganize fields if columns are reduced
-        if (newColumns < section.columns) {
-          const allFields = section.fields.flat();
-          newFields = Array(newColumns).fill().map(() => []);
-          allFields.forEach((field, index) => {
-            const columnIndex = index % newColumns;
-            newFields[columnIndex].push(field);
+        if (newColumns > section.columns) {
+          // Add new columns
+          for (let i = section.columns; i < newColumns; i++) {
+            newFields.push([]);
+          }
+        } else if (newColumns < section.columns) {
+          // Remove columns and redistribute fields
+          const removedFields = newFields.slice(newColumns).flat();
+          newFields = newFields.slice(0, newColumns);
+          removedFields.forEach((field, index) => {
+            newFields[index % newColumns].push(field);
           });
         }
         
@@ -355,7 +359,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 className="mb-8 p-4 border border-dashed border-gray-300 rounded-lg"
               >
                 {renderSectionControls(section)}
-                <div className={`grid grid-cols-1 sm:grid-cols-${section.columns} gap-4`}>
+                <div className={`grid grid-cols-1 sm:grid-cols-2 ${section.columns > 2 ? `md:grid-cols-${section.columns}` : ''} gap-4`}>
                   {Array.from({ length: section.columns }).map((_, columnIndex) => (
                     <Droppable key={`${section.id}-${columnIndex}`} droppableId={`${section.id}-${columnIndex}`} type="FIELD">
                       {(provided) => (
