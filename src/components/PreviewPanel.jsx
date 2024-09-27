@@ -130,7 +130,41 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     updateFormConfig({ fields: updatedFields });
   };
 
+  const handleLabelDoubleClick = (fieldId, currentLabel) => {
+    setEditingLabel({ id: fieldId, label: currentLabel });
+  };
+
+  const handleLabelChange = (e) => {
+    setEditingLabel(prev => ({ ...prev, label: e.target.value }));
+  };
+
+  const handleLabelBlur = () => {
+    if (editingLabel) {
+      updateField(editingLabel.id, { label: editingLabel.label });
+      setEditingLabel(null);
+    }
+  };
+
   const renderField = (field) => {
+    const labelElement = (
+      <Label
+        htmlFor={field.id}
+        onDoubleClick={() => handleLabelDoubleClick(field.id, field.label)}
+        className="cursor-pointer"
+      >
+        {editingLabel && editingLabel.id === field.id ? (
+          <Input
+            value={editingLabel.label}
+            onChange={handleLabelChange}
+            onBlur={handleLabelBlur}
+            autoFocus
+          />
+        ) : (
+          field.label
+        )}
+      </Label>
+    );
+
     switch (field.type) {
       case 'text':
       case 'email':
@@ -140,14 +174,14 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       case 'date':
         return (
           <div className="mb-4">
-            <Label htmlFor={field.id}>{field.label}</Label>
+            {labelElement}
             <Input type={field.type} id={field.id} placeholder={field.placeholder} />
           </div>
         );
       case 'textarea':
         return (
           <div className="mb-4">
-            <Label htmlFor={field.id}>{field.label}</Label>
+            {labelElement}
             <textarea
               id={field.id}
               placeholder={field.placeholder}
@@ -158,7 +192,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       case 'select':
         return (
           <div className="mb-4">
-            <Label htmlFor={field.id}>{field.label}</Label>
+            {labelElement}
             <select id={field.id} className="w-full p-2 border rounded">
               {field.options.map((option, index) => (
                 <option key={index} value={option}>
@@ -173,7 +207,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         return (
           <div className="mb-4">
             <fieldset>
-              <legend>{field.label}</legend>
+              <legend>{labelElement}</legend>
               {field.options.map((option, index) => (
                 <div key={index} className="flex items-center">
                   <input
@@ -193,7 +227,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       case 'file':
         return (
           <div className="mb-4">
-            <Label htmlFor={field.id}>{field.label}</Label>
+            {labelElement}
             <Input type="file" id={field.id} />
           </div>
         );
@@ -321,7 +355,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 className="mb-8 p-4 border border-dashed border-gray-300 rounded-lg"
               >
                 {renderSectionControls(section)}
-                <div className={`grid grid-cols-${section.columns} gap-4`}>
+                <div className={`grid grid-cols-1 sm:grid-cols-${section.columns} gap-4`}>
                   {Array.from({ length: section.columns }).map((_, columnIndex) => (
                     <Droppable key={`${section.id}-${columnIndex}`} droppableId={`${section.id}-${columnIndex}`} type="FIELD">
                       {(provided) => (

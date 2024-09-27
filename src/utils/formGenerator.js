@@ -3,7 +3,7 @@ export const generateFormCode = (formConfig) => {
 
   const generateFieldHtml = (field, index) => {
     const { type, label, name, placeholder, required, content, min, max, step, value } = field;
-    const className = style === 'tailwind' ? 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
+    const className = style === 'tailwind' ? 'w-full mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
     const requiredAttr = required ? 'required' : '';
     const fieldName = generateUniqueName(name, index);
     
@@ -16,7 +16,6 @@ export const generateFormCode = (formConfig) => {
       case 'date':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            
             <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
             <input type="${type}" id="${fieldName}" name="${fieldName}" placeholder="${placeholder}" class="${className}" ${requiredAttr}>
           </div>
@@ -59,9 +58,15 @@ export const generateFormCode = (formConfig) => {
           </div>
         `;
       case 'button':
+        const alignmentClass = style === 'tailwind' ? {
+          left: 'text-left',
+          center: 'text-center',
+          right: 'text-right',
+          'full-width': 'w-full',
+        }[field.alignment || 'left'] : '';
         return `
-          <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <button type="submit" class="${style === 'tailwind' ? 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' : 'formulario__boton'}">${label}</button>
+          <div class="${style === 'tailwind' ? `mb-4 ${alignmentClass}` : 'formulario__grupo'}">
+            <button type="submit" class="${style === 'tailwind' ? `px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ${field.alignment === 'full-width' ? 'w-full' : ''}` : 'formulario__boton'}">${label}</button>
           </div>
         `;
       case 'html':
@@ -120,7 +125,7 @@ export const generateFormCode = (formConfig) => {
   };
 
   const formFields = fields.map(section => 
-    `<div class="${style === 'tailwind' ? `grid grid-cols-${section.columns} gap-4` : `formulario__seccion formulario__seccion--${section.columns}-columnas`}">
+    `<div class="${style === 'tailwind' ? `grid grid-cols-1 sm:grid-cols-${section.columns} gap-4` : `formulario__seccion formulario__seccion--${section.columns}-columnas`}">
       ${section.fields.map(column => 
         column.map((field, index) => generateFieldHtml(field, index)).join('')
       ).join('')}
@@ -128,7 +133,7 @@ export const generateFormCode = (formConfig) => {
   ).join('');
 
   const formHtml = `
-    <form action="https://api.web3forms.com/submit" method="POST" class="${style === 'tailwind' ? 'space-y-6' : 'formulario'}">
+    <form action="https://api.web3forms.com/submit" method="POST" class="${style === 'tailwind' ? 'space-y-6 max-w-4xl mx-auto' : 'formulario'}">
       <input type="hidden" name="access_key" value="TU_CLAVE_DE_ACCESO_AQUI">
       ${formFields}
     </form>
@@ -140,7 +145,7 @@ export const generateFormCode = (formConfig) => {
 export const generateFormCSS = (formConfig) => {
   return `
     .formulario {
-      max-width: 500px;
+      max-width: 100%;
       margin: 0 auto;
       padding: 20px;
       background-color: #f9f9f9;
@@ -210,20 +215,28 @@ export const generateFormCSS = (formConfig) => {
       gap: 20px;
     }
 
-    .formulario__seccion--1-columnas {
-      grid-template-columns: 1fr;
+    @media (min-width: 640px) {
+      .formulario__seccion--1-columnas {
+        grid-template-columns: 1fr;
+      }
+
+      .formulario__seccion--2-columnas {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .formulario__seccion--3-columnas {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .formulario__seccion--4-columnas {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
 
-    .formulario__seccion--2-columnas {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .formulario__seccion--3-columnas {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .formulario__seccion--4-columnas {
-      grid-template-columns: repeat(4, 1fr);
+    @media (max-width: 639px) {
+      .formulario__seccion {
+        grid-template-columns: 1fr;
+      }
     }
   `;
 };
