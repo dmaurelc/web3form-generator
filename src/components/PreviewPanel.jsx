@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2, Copy, Star } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, Copy, Star, Minus, Plus, AlertCircle } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import SliderField from './SliderField';
 import NumberIncrementField from './NumberIncrementField';
