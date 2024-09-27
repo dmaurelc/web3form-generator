@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code, Plus, Minus } from 'lucide-react';
+import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code } from 'lucide-react';
 import SectionIcon from './SectionIcon';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
@@ -47,18 +47,6 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     required: false,
     options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
   });
-
-  const adjustSectionColumns = (sectionId, adjustment) => {
-    const updatedFields = formConfig.fields.map(section => {
-      if (section.id === sectionId) {
-        const newColumns = Math.max(1, Math.min(4, section.columns + adjustment));
-        const newFields = Array(newColumns).fill().map((_, i) => section.fields[i] || []);
-        return { ...section, columns: newColumns, fields: newFields };
-      }
-      return section;
-    });
-    updateFormConfig({ fields: updatedFields });
-  };
 
   const fieldTypes = formConfig.formType === 'basico' 
     ? [
@@ -147,37 +135,15 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         </div>
         <div>
           <h3 className="text-lg font-medium mb-2">Agregar Secciones</h3>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {[1, 2, 3, 4].map((columns) => (
-              <Button key={columns} onClick={() => addSection(columns)} variant="outline" className="flex items-center justify-center">
+              <Button key={columns} onClick={() => addSection(columns)} variant="outline" className="flex flex-col items-center justify-center p-2">
                 <SectionIcon columns={columns} />
-                <span className="sr-only">{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
+                <span className="mt-1">{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
               </Button>
             ))}
           </div>
         </div>
-        {formConfig.fields.map((section, index) => (
-          <div key={section.id} className="flex items-center space-x-2">
-            <SectionIcon columns={section.columns} />
-            <span>Sección {index + 1}</span>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => adjustSectionColumns(section.id, 1)}
-              disabled={section.columns >= 4}
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => adjustSectionColumns(section.id, -1)}
-              disabled={section.columns <= 1}
-            >
-              <Minus className="w-4 h-4" />
-            </Button>
-          </div>
-        ))}
       </div>
     </div>
   );
