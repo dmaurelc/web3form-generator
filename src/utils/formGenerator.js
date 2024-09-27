@@ -2,7 +2,7 @@ export const generateFormCode = (formConfig) => {
   const { formType, fields, style } = formConfig;
 
   const generateFieldHtml = (field, index) => {
-    const { type, label, name, placeholder, required, content } = field;
+    const { type, label, name, placeholder, required, content, alignment, icon, iconPosition } = field;
     const className = style === 'tailwind' ? 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
     const requiredAttr = required ? 'required' : '';
     const fieldName = generateUniqueName(name, index);
@@ -58,9 +58,22 @@ export const generateFormCode = (formConfig) => {
           </div>
         `;
       case 'button':
+        const alignmentClass = style === 'tailwind' 
+          ? {
+              left: 'text-left',
+              center: 'text-center',
+              right: 'text-right',
+              'full-width': 'w-full',
+            }[alignment || 'left']
+          : `formulario__boton--${alignment || 'left'}`;
+        
+        const iconHtml = icon ? `<span class="${iconPosition === 'left' ? 'mr-2' : 'ml-2'}">${icon}</span>` : '';
+        
         return `
-          <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <button type="submit" class="${style === 'tailwind' ? 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' : 'formulario__boton'}">${label}</button>
+          <div class="${style === 'tailwind' ? `mb-4 ${alignmentClass}` : `formulario__grupo ${alignmentClass}`}">
+            <button type="submit" class="${style === 'tailwind' ? 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' : 'formulario__boton'}">
+              ${iconPosition === 'left' ? iconHtml : ''}${label}${iconPosition === 'right' ? iconHtml : ''}
+            </button>
           </div>
         `;
       case 'html':
@@ -158,6 +171,22 @@ export const generateFormCSS = (formConfig) => {
 
     .formulario__boton:hover {
       background-color: #357ae8;
+    }
+
+    .formulario__boton--left {
+      text-align: left;
+    }
+
+    .formulario__boton--center {
+      text-align: center;
+    }
+
+    .formulario__boton--right {
+      text-align: right;
+    }
+
+    .formulario__boton--full-width {
+      width: 100%;
     }
 
     .formulario__seccion {

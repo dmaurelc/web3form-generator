@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Plus, Minus, Copy } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Copy } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+import * as Icons from 'lucide-react';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
@@ -196,6 +197,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           </div>
         );
       case 'button':
+        const IconComponent = field.icon ? Icons[field.icon] : null;
         const alignmentClass = {
           left: 'text-left',
           center: 'text-center',
@@ -204,7 +206,11 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         }[field.alignment || 'left'];
         return (
           <div className={`mb-4 ${alignmentClass}`}>
-            <Button>{field.label}</Button>
+            <Button className={field.alignment === 'full-width' ? 'w-full' : ''}>
+              {field.iconPosition === 'left' && IconComponent && <IconComponent className="mr-2 h-4 w-4" />}
+              {field.label}
+              {field.iconPosition === 'right' && IconComponent && <IconComponent className="ml-2 h-4 w-4" />}
+            </Button>
           </div>
         );
       case 'html':
@@ -236,41 +242,83 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="placeholder">Placeholder</Label>
-              <Input
-                id="placeholder"
-                value={field.placeholder}
-                onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
-                className="col-span-3"
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="required"
-                checked={field.required}
-                onCheckedChange={(checked) => updateField(field.id, { required: checked })}
-              />
-              <Label htmlFor="required">Campo obligatorio</Label>
-            </div>
-            {field.type === 'button' && (
+            {field.type !== 'button' && (
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="alignment">Alineación</Label>
-                <Select
-                  value={field.alignment || 'left'}
-                  onValueChange={(value) => updateField(field.id, { alignment: value })}
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Selecciona la alineación" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="left">Izquierda</SelectItem>
-                    <SelectItem value="center">Centrado</SelectItem>
-                    <SelectItem value="right">Derecha</SelectItem>
-                    <SelectItem value="full-width">Ancho completo</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="placeholder">Placeholder</Label>
+                <Input
+                  id="placeholder"
+                  value={field.placeholder}
+                  onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
+                  className="col-span-3"
+                />
               </div>
+            )}
+            {field.type !== 'button' && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="required"
+                  checked={field.required}
+                  onCheckedChange={(checked) => updateField(field.id, { required: checked })}
+                />
+                <Label htmlFor="required">Campo obligatorio</Label>
+              </div>
+            )}
+            {field.type === 'button' && (
+              <>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="alignment">Alineación</Label>
+                  <Select
+                    value={field.alignment || 'left'}
+                    onValueChange={(value) => updateField(field.id, { alignment: value })}
+                  >
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Selecciona la alineación" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">Izquierda</SelectItem>
+                      <SelectItem value="center">Centrado</SelectItem>
+                      <SelectItem value="right">Derecha</SelectItem>
+                      <SelectItem value="full-width">Ancho completo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="icon">Icono</Label>
+                  <Select
+                    value={field.icon || ''}
+                    onValueChange={(value) => updateField(field.id, { icon: value })}
+                  >
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Selecciona un icono" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Sin icono</SelectItem>
+                      {Object.keys(Icons).map((iconName) => (
+                        <SelectItem key={iconName} value={iconName}>
+                          {iconName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {field.icon && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="iconPosition">Posición del icono</Label>
+                    <Select
+                      value={field.iconPosition || 'left'}
+                      onValueChange={(value) => updateField(field.id, { iconPosition: value })}
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Selecciona la posición del icono" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="left">Izquierda</SelectItem>
+                        <SelectItem value="right">Derecha</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </DialogContent>
@@ -285,9 +333,9 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
 
   const renderSectionControls = (section) => (
     <div className="flex items-center justify-center space-x-2 mb-4">
-      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, -1)} disabled={section.columns <= 1}><Minus className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, -1)} disabled={section.columns <= 1}><Icons.Minus className="h-4 w-4" /></Button>
       <span>{section.columns} {section.columns === 1 ? 'Columna' : 'Columnas'}</span>
-      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, 1)} disabled={section.columns >= 4}><Plus className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, 1)} disabled={section.columns >= 4}><Icons.Plus className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(section.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(section.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeSection(section.id)}><Trash2 className="h-4 w-4" /></Button>
