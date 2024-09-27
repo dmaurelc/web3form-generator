@@ -40,22 +40,22 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
 
   const createField = (type) => {
     const baseNames = {
-      text: 'Texto',
+      text: 'Text',
       email: 'Email',
-      password: 'Contraseña',
-      number: 'Número',
-      tel: 'Teléfono',
-      textarea: 'Área de texto',
-      select: 'Selección',
-      checkbox: 'Casilla',
+      password: 'Password',
+      number: 'Number',
+      tel: 'Phone',
+      textarea: 'Text Area',
+      select: 'Select',
+      checkbox: 'Checkbox',
       radio: 'Radio',
-      file: 'Archivo',
-      date: 'Fecha',
-      button: 'Botón',
+      file: 'File',
+      date: 'Date',
+      button: 'Button',
       html: 'HTML',
       slider: 'Slider',
-      numberIncrement: 'Incrementador',
-      rating: 'Calificación'
+      numberIncrement: 'Number Increment',
+      rating: 'Rating'
     };
 
     const baseName = baseNames[type] || type;
@@ -77,8 +77,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       placeholder: '',
       required: false,
       options: type === 'select' || type === 'radio' || type === 'checkbox' ? [
-        { value: 'option1', label: 'Opción 1' },
-        { value: 'option2', label: 'Opción 2' }
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' }
       ] : undefined,
       alignment: type === 'button' ? 'left' : undefined,
       min: type === 'slider' ? 0 : undefined,
@@ -89,32 +89,32 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     };
   };
 
-  const fieldTypes = formConfig.formType === 'basico' 
+  const fieldTypes = formConfig.formType === 'basic' 
     ? [
-        { type: 'text', icon: TextIcon, label: 'Texto' },
-        { type: 'email', icon: Mail, label: 'Correo' },
-        { type: 'number', icon: Hash, label: 'Número' },
-        { type: 'tel', icon: Phone, label: 'Teléfono' },
-        { type: 'button', icon: Type, label: 'Botón' },
+        { type: 'text', icon: TextIcon, label: 'Text' },
+        { type: 'email', icon: Mail, label: 'Email' },
+        { type: 'number', icon: Hash, label: 'Number' },
+        { type: 'tel', icon: Phone, label: 'Phone' },
+        { type: 'button', icon: Type, label: 'Button' },
         { type: 'html', icon: Code, label: 'HTML' },
       ]
     : [
-        { type: 'text', icon: TextIcon, label: 'Texto' },
-        { type: 'textarea', icon: AlignJustify, label: 'Área de texto' },
-        { type: 'checkbox', icon: CheckSquare, label: 'Casilla' },
+        { type: 'text', icon: TextIcon, label: 'Text' },
+        { type: 'textarea', icon: AlignJustify, label: 'Text Area' },
+        { type: 'checkbox', icon: CheckSquare, label: 'Checkbox' },
         { type: 'radio', icon: Radio, label: 'Radio' },
-        { type: 'select', icon: TextIcon, label: 'Selección' },
-        { type: 'file', icon: FileText, label: 'Archivo' },
-        { type: 'date', icon: CalendarIcon, label: 'Fecha' },
-        { type: 'number', icon: Hash, label: 'Número' },
-        { type: 'email', icon: Mail, label: 'Correo' },
-        { type: 'password', icon: Lock, label: 'Contraseña' },
-        { type: 'tel', icon: Phone, label: 'Teléfono' },
-        { type: 'button', icon: Type, label: 'Botón' },
+        { type: 'select', icon: TextIcon, label: 'Select' },
+        { type: 'file', icon: FileText, label: 'File' },
+        { type: 'date', icon: CalendarIcon, label: 'Date' },
+        { type: 'number', icon: Hash, label: 'Number' },
+        { type: 'email', icon: Mail, label: 'Email' },
+        { type: 'password', icon: Lock, label: 'Password' },
+        { type: 'tel', icon: Phone, label: 'Phone' },
+        { type: 'button', icon: Type, label: 'Button' },
         { type: 'html', icon: Code, label: 'HTML' },
         { type: 'slider', icon: Sliders, label: 'Slider' },
-        { type: 'numberIncrement', icon: PlusSquare, label: 'Incrementador' },
-        { type: 'rating', icon: Star, label: 'Calificación' },
+        { type: 'numberIncrement', icon: PlusSquare, label: 'Number Increment' },
+        { type: 'rating', icon: Star, label: 'Rating' },
       ];
 
   const onDragStart = (e, type) => {
@@ -123,31 +123,31 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">Personaliza tu Formulario</h2>
+      <h2 className="text-xl font-semibold mb-4">Customize Your Form</h2>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Tipo de Formulario</label>
+          <label className="block text-sm font-medium text-gray-700">Form Type</label>
           <Select
             value={formConfig.formType}
             onValueChange={(value) => updateFormConfig({ formType: value })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Selecciona el tipo de formulario" />
+              <SelectValue placeholder="Select form type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="basico">Básico</SelectItem>
-              <SelectItem value="avanzado">Avanzado</SelectItem>
+              <SelectItem value="basic">Basic</SelectItem>
+              <SelectItem value="advanced">Advanced</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Estilo</label>
+          <label className="block text-sm font-medium text-gray-700">Style</label>
           <Select
             value={formConfig.style}
             onValueChange={(value) => updateFormConfig({ style: value })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Selecciona el estilo" />
+              <SelectValue placeholder="Select style" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="tailwind">Tailwind CSS</SelectItem>
@@ -156,7 +156,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
           </Select>
         </div>
         <div>
-          <h3 className="text-lg font-medium mb-2">Campos</h3>
+          <h3 className="text-lg font-medium mb-2">Fields</h3>
           <div className="grid grid-cols-2 gap-2">
             {fieldTypes.map((field) => (
               <div
@@ -178,7 +178,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
           </div>
         </div>
         <div>
-          <h3 className="text-lg font-medium mb-2">Columnas</h3>
+          <h3 className="text-lg font-medium mb-2">Columns</h3>
           <div className="grid grid-cols-2 gap-2">
             {[1, 2, 3, 4].map((columns) => (
               <Button 
@@ -188,7 +188,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
                 className="flex flex-col items-center justify-center p-2 h-16"
               >
                 <SectionIcon columns={columns} />
-                <span className="mt-1 text-xs">{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
+                <span className="mt-1 text-xs">{columns} {columns === 1 ? 'Column' : 'Columns'}</span>
               </Button>
             ))}
           </div>

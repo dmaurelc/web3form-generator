@@ -5,7 +5,7 @@ import PreviewPanel from './PreviewPanel';
 
 const FormBuilder = () => {
   const [formConfig, setFormConfig] = useState({
-    formType: 'basico',
+    formType: 'basic',
     fields: [],
     style: 'tailwind',
   });
@@ -60,7 +60,7 @@ const FormBuilder = () => {
           <PreviewPanel formConfig={formConfig} updateFormConfig={updateFormConfig} />
           {!hasActiveFields && (
             <div className="text-center mt-4">
-              <p>Agrega un campo para comenzar a crear tu formulario.</p>
+              <p>Add a field to start creating your form.</p>
             </div>
           )}
         </div>

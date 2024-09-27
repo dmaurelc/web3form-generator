@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -8,7 +9,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
 import { Edit, ArrowUp, ArrowDown, Trash2, Copy, Star, Minus, Plus } from 'lucide-react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
 import SliderField from './SliderField';
 import NumberIncrementField from './NumberIncrementField';
 import { toast } from 'sonner';
@@ -16,16 +16,16 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
-  const [activeTab, setActiveTab] = useState('vista previa');
+  const [activeTab, setActiveTab] = useState('preview');
   const [editingLabel, setEditingLabel] = useState(null);
 
   const formCode = generateFormCode(formConfig);
   const formCSS = formConfig.style === 'css' ? generateFormCSS(formConfig) : '';
 
-  const copiarCodigo = () => {
-    const codigoACopiar = formConfig.style === 'css' ? `${formCode}\n\n${formCSS}` : formCode;
-    navigator.clipboard.writeText(codigoACopiar);
-    toast.success('¡Código copiado al portapapeles!');
+  const copyCode = () => {
+    const codeToCopy = formConfig.style === 'css' ? `${formCode}\n\n${formCSS}` : formCode;
+    navigator.clipboard.writeText(codeToCopy);
+    toast.success('Code copied to clipboard!');
   };
 
   const updateField = (fieldId, updates) => {
@@ -201,7 +201,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           <div className="mb-4">
             {labelElement}
             <select id={field.id} className="w-full p-2 border rounded">
-              <option value="">Selecciona una opción</option>
+              <option value="">Select an option</option>
               {field.options.map((option, index) => (
                 <option key={index} value={option.value}>
                   {option.label}
@@ -287,11 +287,11 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar Campo</DialogTitle>
+            <DialogTitle>Edit Field</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="label">Etiqueta</Label>
+              <Label htmlFor="label">Label</Label>
               <Input
                 id="label"
                 value={field.label}
@@ -317,31 +317,31 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                   checked={field.required}
                   onCheckedChange={(checked) => updateField(field.id, { required: checked })}
                 />
-                <Label htmlFor="required">Campo obligatorio</Label>
+                <Label htmlFor="required">Required field</Label>
               </div>
             )}
             {field.type === 'button' && (
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="alignment">Alineación</Label>
+                <Label htmlFor="alignment">Alignment</Label>
                 <Select
                   value={field.alignment || 'left'}
                   onValueChange={(value) => updateField(field.id, { alignment: value })}
                 >
                   <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Selecciona la alineación" />
+                    <SelectValue placeholder="Select alignment" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="left">Izquierda</SelectItem>
-                    <SelectItem value="center">Centrado</SelectItem>
-                    <SelectItem value="right">Derecha</SelectItem>
-                    <SelectItem value="full-width">Ancho completo</SelectItem>
+                    <SelectItem value="left">Left</SelectItem>
+                    <SelectItem value="center">Center</SelectItem>
+                    <SelectItem value="right">Right</SelectItem>
+                    <SelectItem value="full-width">Full Width</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
             {(field.type === 'checkbox' || field.type === 'radio' || field.type === 'select') && (
               <div className="grid gap-4">
-                <Label>Opciones</Label>
+                <Label>Options</Label>
                 {field.options.map((option, index) => (
                   <div key={index} className="flex items-center space-x-2">
                     <Input
@@ -351,7 +351,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                         newOptions[index] = { ...newOptions[index], value: e.target.value };
                         updateField(field.id, { options: newOptions });
                       }}
-                      placeholder="Valor"
+                      placeholder="Value"
                     />
                     <Input
                       value={option.label}
@@ -360,7 +360,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                         newOptions[index] = { ...newOptions[index], label: e.target.value };
                         updateField(field.id, { options: newOptions });
                       }}
-                      placeholder="Etiqueta"
+                      placeholder="Label"
                     />
                     <Button
                       variant="ghost"
@@ -380,7 +380,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                     updateField(field.id, { options: newOptions });
                   }}
                 >
-                  Agregar opción
+                  Add option
                 </Button>
               </div>
             )}
@@ -397,7 +397,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const renderSectionControls = (section) => (
     <div className="flex items-center justify-center space-x-2 mb-4">
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, -1)} disabled={section.columns <= 1}><Minus className="h-4 w-4" /></Button>
-      <span>{section.columns} {section.columns === 1 ? 'Columna' : 'Columnas'}</span>
+      <span>{section.columns} {section.columns === 1 ? 'Column' : 'Columns'}</span>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, 1)} disabled={section.columns >= 4}><Plus className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(section.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(section.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
@@ -413,10 +413,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     <div className="bg-white rounded-lg shadow">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="vista previa">Vista Previa</TabsTrigger>
-          <TabsTrigger value="codigo">Código</TabsTrigger>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="code">Code</TabsTrigger>
         </TabsList>
-        <TabsContent value="vista previa">
+        <TabsContent value="preview">
           <div className="p-4">
             {formConfig.fields.map((section, index) => (
               <div
@@ -463,13 +463,13 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             ))}
             {!hasActiveFields && (
               <div className="text-center mt-4 p-8 bg-gray-100 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Formulario Vacío</h2>
-                <p className="text-lg font-medium text-gray-600">No hay campos o columnas activas en el formulario.</p>
+                <h2 className="text-2xl font-bold mb-4">Empty Form</h2>
+                <p className="text-lg font-medium text-gray-600">There are no active fields or columns in the form.</p>
               </div>
             )}
           </div>
         </TabsContent>
-        <TabsContent value="codigo">
+        <TabsContent value="code">
           <div className="mt-4 relative">
             <Tabs defaultValue="html">
               <TabsList>
@@ -486,14 +486,15 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                     {formCode}
                   </SyntaxHighlighter>
                   <Button
-                    onClick={copiarCodigo}
+                    onClick={copyCode}
                     className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-blue-600"
                   >
-                    <Copy className="mr-2 h-4 w-4" /> Copiar Código
+                    <Copy className="mr-2 h-4 w-4" /> Copy Code
                   </Button>
                 </div>
               </TabsContent>
               {formConfig.style === 'css' && (
+                
                 <TabsContent value="css">
                   <div className="relative group">
                     <SyntaxHighlighter
@@ -504,10 +505,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                       {formCSS}
                     </SyntaxHighlighter>
                     <Button
-                      onClick={copiarCodigo}
+                      onClick={copyCode}
                       className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-blue-600"
                     >
-                      <Copy className="mr-2 h-4 w-4" /> Copiar Código
+                      <Copy className="mr-2 h-4 w-4" /> Copy Code
                     </Button>
                   </div>
                 </TabsContent>
