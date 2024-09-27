@@ -13,7 +13,6 @@ import * as Icons from 'lucide-react';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
-  const [editingLabel, setEditingLabel] = useState(null);
 
   const formCode = generateFormCode(formConfig);
   const formCSS = formConfig.style === 'css' ? generateFormCSS(formConfig) : '';
