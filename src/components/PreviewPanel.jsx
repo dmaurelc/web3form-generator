@@ -128,14 +128,92 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   };
 
   const renderField = (field) => {
-    // ... (el código existente para renderField permanece sin cambios)
+    switch (field.type) {
+      case 'text':
+      case 'email':
+      case 'password':
+      case 'number':
+      case 'tel':
+      case 'date':
+        return (
+          <div className="mb-4">
+            <Label htmlFor={field.id}>{field.label}</Label>
+            <Input type={field.type} id={field.id} placeholder={field.placeholder} />
+          </div>
+        );
+      case 'textarea':
+        return (
+          <div className="mb-4">
+            <Label htmlFor={field.id}>{field.label}</Label>
+            <textarea
+              id={field.id}
+              placeholder={field.placeholder}
+              className="w-full p-2 border rounded"
+            ></textarea>
+          </div>
+        );
+      case 'select':
+        return (
+          <div className="mb-4">
+            <Label htmlFor={field.id}>{field.label}</Label>
+            <select id={field.id} className="w-full p-2 border rounded">
+              {field.options.map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        );
+      case 'checkbox':
+      case 'radio':
+        return (
+          <div className="mb-4">
+            <fieldset>
+              <legend>{field.label}</legend>
+              {field.options.map((option, index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type={field.type}
+                    id={`${field.id}_${index}`}
+                    name={field.id}
+                    value={option}
+                  />
+                  <Label htmlFor={`${field.id}_${index}`} className="ml-2">
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </fieldset>
+          </div>
+        );
+      case 'file':
+        return (
+          <div className="mb-4">
+            <Label htmlFor={field.id}>{field.label}</Label>
+            <Input type="file" id={field.id} />
+          </div>
+        );
+      case 'button':
+        return (
+          <div className="mb-4">
+            <Button>{field.label}</Button>
+          </div>
+        );
+      case 'html':
+        return (
+          <div className="mb-4" dangerouslySetInnerHTML={{ __html: field.content }}></div>
+        );
+      default:
+        return null;
+    }
   };
 
   const renderFieldControls = (sectionId, columnIndex, field) => (
     <div className="mt-2 flex justify-end space-x-1">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" className="h-6 w-6"><Edit className="h-4 w-4" /></Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -171,22 +249,22 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           </div>
         </DialogContent>
       </Dialog>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveField(sectionId, columnIndex, field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveField(sectionId, columnIndex, field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeField(sectionId, columnIndex, field.id)}><Trash2 className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => duplicateField(sectionId, columnIndex, field.id)}><Copy className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeField(sectionId, columnIndex, field.id)}><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => duplicateField(sectionId, columnIndex, field.id)}><Copy className="h-4 w-4" /></Button>
     </div>
   );
 
   const renderSectionControls = (section) => (
     <div className="flex items-center justify-center space-x-2 mb-4">
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => adjustSectionColumns(section.id, -1)} disabled={section.columns <= 1}><Minus className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, -1)} disabled={section.columns <= 1}><Minus className="h-4 w-4" /></Button>
       <span>{section.columns} {section.columns === 1 ? 'Columna' : 'Columnas'}</span>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => adjustSectionColumns(section.id, 1)} disabled={section.columns >= 4}><Plus className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSection(section.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSection(section.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeSection(section.id)}><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => adjustSectionColumns(section.id, 1)} disabled={section.columns >= 4}><Plus className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(section.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(section.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeSection(section.id)}><Trash2 className="h-4 w-4" /></Button>
     </div>
   );
 
@@ -221,7 +299,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className="mb-4"
+                                  className="mb-4 p-2 bg-gray-50 rounded border border-gray-200"
                                 >
                                   {renderField(field)}
                                   {renderFieldControls(section.id, columnIndex, field)}
