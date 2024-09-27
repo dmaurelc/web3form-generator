@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Plus, Minus, Copy } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Plus, Minus, Copy, Star } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import SliderField from './SliderField';
 import NumberIncrementField from './NumberIncrementField';
+import { toast } from 'sonner';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
@@ -22,7 +23,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const copiarCodigo = () => {
     const codigoACopiar = formConfig.style === 'css' ? `${formCode}\n\n${formCSS}` : formCode;
     navigator.clipboard.writeText(codigoACopiar);
-    alert('¡Código copiado al portapapeles!');
+    toast.success('¡Código copiado al portapapeles!');
   };
 
   const updateField = (fieldId, updates) => {
@@ -199,8 +200,8 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             {labelElement}
             <select id={field.id} className="w-full p-2 border rounded">
               {field.options.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
+                <option key={index} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -218,10 +219,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                     type={field.type}
                     id={`${field.id}_${index}`}
                     name={field.id}
-                    value={option}
+                    value={option.value}
                   />
                   <Label htmlFor={`${field.id}_${index}`} className="ml-2">
-                    {option}
+                    {option.label}
                   </Label>
                 </div>
               ))}
@@ -255,6 +256,21 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         return <SliderField field={field} updateField={updateField} />;
       case 'numberIncrement':
         return <NumberIncrementField field={field} updateField={updateField} />;
+      case 'rating':
+        return (
+          <div className="mb-4">
+            {labelElement}
+            <div className="flex items-center">
+              {[...Array(field.maxRating)].map((_, index) => (
+                <Star
+                  key={index}
+                  className={`h-6 w-6 ${index < field.value ? 'text-yellow-400' : 'text-gray-300'}`}
+                  onClick={() => updateField(field.id, { value: index + 1 })}
+                />
+              ))}
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -320,6 +336,51 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 </Select>
               </div>
             )}
+            {(field.type === 'checkbox' || field.type === 'radio' || field.type === 'select') && (
+              <div className="grid gap-4">
+                <Label>Opciones</Label>
+                {field.options.map((option, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      value={option.value}
+                      onChange={(e) => {
+                        const newOptions = [...field.options];
+                        newOptions[index] = { ...newOptions[index], value: e.target.value };
+                        updateField(field.id, { options: newOptions });
+                      }}
+                      placeholder="Valor"
+                    />
+                    <Input
+                      value={option.label}
+                      onChange={(e) => {
+                        const newOptions = [...field.options];
+                        newOptions[index] = { ...newOptions[index], label: e.target.value };
+                        updateField(field.id, { options: newOptions });
+                      }}
+                      placeholder="Etiqueta"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        const newOptions = field.options.filter((_, i) => i !== index);
+                        updateField(field.id, { options: newOptions });
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  onClick={() => {
+                    const newOptions = [...field.options, { value: '', label: '' }];
+                    updateField(field.id, { options: newOptions });
+                  }}
+                >
+                  Agregar opción
+                </Button>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -342,6 +403,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveSection(section.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeSection(section.id)}><Trash2 className="h-4 w-4" /></Button>
     </div>
+  );
+
+  const hasActiveFields = formConfig.fields.some(section => 
+    section.fields.some(column => column.length > 0)
   );
 
   return (
@@ -391,31 +456,52 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 </div>
               </div>
             ))}
+            {!hasActiveFields && (
+              <div className="text-center mt-4 p-8 bg-gray-100 rounded-lg">
+                <p className="text-lg font-medium text-gray-600">No hay campos activos en el formulario.</p>
+                <p className="text-sm text-gray-500 mt-2">Agrega un campo desde el panel de personalización para comenzar a crear tu formulario.</p>
+              </div>
+            )}
           </div>
         </TabsContent>
         <TabsContent value="codigo">
-          <div className="mt-4">
+          <div className="mt-4 relative">
             <Tabs defaultValue="html">
               <TabsList>
                 <TabsTrigger value="html">HTML</TabsTrigger>
-                {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrigger>}
+                {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrig
+
+ger>}
               </TabsList>
               <TabsContent value="html">
-                <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
-                  <code>{formCode}</code>
-                </pre>
+                <div className="relative">
+                  <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                    <code className="language-html">{formCode}</code>
+                  </pre>
+                  <Button
+                    onClick={copiarCodigo}
+                    className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 hover:opacity-100"
+                  >
+                    Copiar Código
+                  </Button>
+                </div>
               </TabsContent>
               {formConfig.style === 'css' && (
                 <TabsContent value="css">
-                  <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
-                    <code>{formCSS}</code>
-                  </pre>
+                  <div className="relative">
+                    <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                      <code className="language-css">{formCSS}</code>
+                    </pre>
+                    <Button
+                      onClick={copiarCodigo}
+                      className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 hover:opacity-100"
+                    >
+                      Copiar Código
+                    </Button>
+                  </div>
                 </TabsContent>
               )}
             </Tabs>
-            <Button onClick={copiarCodigo} className="mt-4">
-              Copiar Código
-            </Button>
           </div>
         </TabsContent>
       </Tabs>

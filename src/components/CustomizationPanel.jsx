@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code, Sliders, PlusSquare } from 'lucide-react';
+import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code, Sliders, PlusSquare, Star } from 'lucide-react';
 import SectionIcon from './SectionIcon';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
@@ -54,7 +54,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       button: 'button',
       html: 'html',
       slider: 'slider',
-      numberIncrement: 'numberIncrement'
+      numberIncrement: 'numberIncrement',
+      rating: 'rating'
     };
 
     const baseName = baseNames[type] || type;
@@ -75,12 +76,16 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       name: newName,
       placeholder: '',
       required: false,
-      options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
+      options: type === 'select' || type === 'radio' || type === 'checkbox' ? [
+        { value: 'option1', label: 'Opción 1' },
+        { value: 'option2', label: 'Opción 2' }
+      ] : undefined,
       alignment: type === 'button' ? 'left' : undefined,
       min: type === 'slider' ? 0 : undefined,
       max: type === 'slider' ? 100 : undefined,
       step: type === 'slider' || type === 'numberIncrement' ? 1 : undefined,
       value: type === 'slider' || type === 'numberIncrement' ? 0 : undefined,
+      maxRating: type === 'rating' ? 5 : undefined,
     };
   };
 
@@ -109,6 +114,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         { type: 'html', icon: Code, label: 'HTML' },
         { type: 'slider', icon: Sliders, label: 'Slider' },
         { type: 'numberIncrement', icon: PlusSquare, label: 'Incrementador' },
+        { type: 'rating', icon: Star, label: 'Calificación' },
       ];
 
   const onDragStart = (e, type) => {
