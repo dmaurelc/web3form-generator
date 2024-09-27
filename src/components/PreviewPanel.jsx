@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
 import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Plus, Minus, Copy } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import * as Icons from 'lucide-react';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
@@ -203,13 +202,9 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           right: 'text-right',
           'full-width': 'w-full',
         }[field.alignment || 'left'];
-        const IconComponent = field.icon ? Icons[field.icon] : null;
         return (
           <div className={`mb-4 ${alignmentClass}`}>
-            <Button className={field.alignment === 'full-width' ? 'w-full' : ''}>
-              {IconComponent && <IconComponent className="mr-2 h-4 w-4" />}
-              {field.label}
-            </Button>
+            <Button>{field.label}</Button>
           </div>
         );
       case 'html':
@@ -263,44 +258,23 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
               </div>
             )}
             {field.type === 'button' && (
-              <>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="alignment">Alineación</Label>
-                  <Select
-                    value={field.alignment || 'left'}
-                    onValueChange={(value) => updateField(field.id, { alignment: value })}
-                  >
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Selecciona la alineación" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="left">Izquierda</SelectItem>
-                      <SelectItem value="center">Centrado</SelectItem>
-                      <SelectItem value="right">Derecha</SelectItem>
-                      <SelectItem value="full-width">Ancho completo</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="icon">Icono</Label>
-                  <Select
-                    value={field.icon || ''}
-                    onValueChange={(value) => updateField(field.id, { icon: value })}
-                  >
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Selecciona un icono" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">Sin icono</SelectItem>
-                      {Object.keys(Icons).map((iconName) => (
-                        <SelectItem key={iconName} value={iconName}>
-                          {iconName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="alignment">Alineación</Label>
+                <Select
+                  value={field.alignment || 'left'}
+                  onValueChange={(value) => updateField(field.id, { alignment: value })}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Selecciona la alineación" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="left">Izquierda</SelectItem>
+                    <SelectItem value="center">Centrado</SelectItem>
+                    <SelectItem value="right">Derecha</SelectItem>
+                    <SelectItem value="full-width">Ancho completo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             )}
           </div>
         </DialogContent>

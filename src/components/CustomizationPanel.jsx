@@ -75,7 +75,6 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       required: false,
       options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
       alignment: type === 'button' ? 'left' : undefined,
-      icon: type === 'button' ? null : undefined,
     };
   };
 
