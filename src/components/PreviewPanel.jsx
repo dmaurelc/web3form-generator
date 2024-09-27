@@ -481,7 +481,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                   <SyntaxHighlighter
                     language="html"
                     style={vscDarkPlus}
-                    className="rounded-lg p-4"
+                    className="rounded-lg p-4 whitespace-pre-wrap break-words"
                   >
                     {formCode}
                   </SyntaxHighlighter>
@@ -494,13 +494,12 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 </div>
               </TabsContent>
               {formConfig.style === 'css' && (
-                
                 <TabsContent value="css">
                   <div className="relative group">
                     <SyntaxHighlighter
                       language="css"
                       style={vscDarkPlus}
-                      className="rounded-lg p-4"
+                      className="rounded-lg p-4 whitespace-pre-wrap break-words"
                     >
                       {formCSS}
                     </SyntaxHighlighter>

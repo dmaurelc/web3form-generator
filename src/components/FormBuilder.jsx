@@ -46,10 +46,6 @@ const FormBuilder = () => {
     updateFormConfig({ fields: updatedFields });
   };
 
-  const hasActiveFields = formConfig.fields.some(section => 
-    section.fields.some(column => column.length > 0)
-  );
-
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex flex-col md:flex-row gap-6">
@@ -58,11 +54,6 @@ const FormBuilder = () => {
         </div>
         <div className="w-full md:w-2/3">
           <PreviewPanel formConfig={formConfig} updateFormConfig={updateFormConfig} />
-          {!hasActiveFields && (
-            <div className="text-center mt-4">
-              <p>Add a field to start creating your form.</p>
-            </div>
-          )}
         </div>
       </div>
     </DragDropContext>
