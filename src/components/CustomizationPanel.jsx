@@ -1,22 +1,9 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone } from 'lucide-react';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
-  const addField = (type) => {
-    const newField = { 
-      id: `field_${Date.now()}`,
-      type, 
-      label: `New ${type} field`, 
-      name: `field_${Date.now()}`,
-      placeholder: '',
-      options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Option 1', 'Option 2'] : undefined,
-    };
-    updateFormConfig({ fields: [...formConfig.fields, newField] });
-  };
-
   const addSection = (columns) => {
     const newSection = {
       id: `section_${Date.now()}`,
@@ -25,14 +12,6 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       fields: [],
     };
     updateFormConfig({ fields: [...formConfig.fields, newSection] });
-  };
-
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const items = Array.from(formConfig.fields);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    updateFormConfig({ fields: items });
   };
 
   const fieldTypes = [
@@ -48,6 +27,10 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     { type: 'password', icon: Lock },
     { type: 'tel', icon: Phone },
   ];
+
+  const onDragStart = (e, type) => {
+    e.dataTransfer.setData('fieldType', type);
+  };
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -85,36 +68,24 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         </div>
         <div>
           <h3 className="text-lg font-medium mb-2">Add Fields</h3>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="fields">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-3 gap-2">
-                  {fieldTypes.map((field, index) => (
-                    <Draggable key={field.type} draggableId={field.type} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="flex items-center justify-center"
-                        >
-                          <Button
-                            onClick={() => addField(field.type)}
-                            className="w-full flex items-center justify-center space-x-2 py-2"
-                            variant="outline"
-                          >
-                            <field.icon className="w-4 h-4" />
-                            <span>{field.type}</span>
-                          </Button>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <div className="grid grid-cols-3 gap-2">
+            {fieldTypes.map((field) => (
+              <div
+                key={field.type}
+                draggable
+                onDragStart={(e) => onDragStart(e, field.type)}
+                className="flex items-center justify-center cursor-move"
+              >
+                <Button
+                  className="w-full flex items-center justify-center space-x-2 py-2"
+                  variant="outline"
+                >
+                  <field.icon className="w-4 h-4" />
+                  <span>{field.type}</span>
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
         <div>
           <h3 className="text-lg font-medium mb-2">Add Sections</h3>

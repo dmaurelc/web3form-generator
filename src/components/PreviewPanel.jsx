@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Edit, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
@@ -19,157 +18,108 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     alert('Code copied to clipboard!');
   };
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const sourceId = result.source.droppableId;
-    const destId = result.destination.droppableId;
-    const sourceIndex = result.source.index;
-    const destIndex = result.destination.index;
-
-    const newFields = [...formConfig.fields];
-    let draggedItem;
-
-    if (sourceId === 'preview') {
-      [draggedItem] = newFields.splice(sourceIndex, 1);
-    } else {
-      const sectionIndex = newFields.findIndex(field => field.id === sourceId);
-      [draggedItem] = newFields[sectionIndex].fields.splice(sourceIndex, 1);
-      if (newFields[sectionIndex].fields.length === 0) {
-        newFields.splice(sectionIndex, 1);
-      }
-    }
-
-    if (destId === 'preview') {
-      newFields.splice(destIndex, 0, draggedItem);
-    } else {
-      const sectionIndex = newFields.findIndex(field => field.id === destId);
-      if (sectionIndex === -1) {
-        const newSection = {
-          id: destId,
-          type: 'section',
-          columns: parseInt(destId.split('_')[1]),
-          fields: [draggedItem]
-        };
-        newFields.splice(destIndex, 0, newSection);
-      } else {
-        newFields[sectionIndex].fields.splice(destIndex, 0, draggedItem);
-      }
-    }
-
-    updateFormConfig({ fields: newFields });
+  const onDragOver = (e) => {
+    e.preventDefault();
   };
 
-  const updateField = (fieldId, updates) => {
-    const updatedFields = formConfig.fields.map(field => 
-      field.id === fieldId ? { ...field, ...updates } : 
-      field.type === 'section' ? { ...field, fields: field.fields.map(subField => 
-        subField.id === fieldId ? { ...subField, ...updates } : subField
-      )} : field
-    );
-    updateFormConfig({ fields: updatedFields });
-  };
-
-  const removeField = (fieldId) => {
-    const updatedFields = formConfig.fields.reduce((acc, field) => {
-      if (field.id === fieldId) return acc;
-      if (field.type === 'section') {
-        const updatedSectionFields = field.fields.filter(subField => subField.id !== fieldId);
-        if (updatedSectionFields.length > 0) {
-          acc.push({ ...field, fields: updatedSectionFields });
+  const onDrop = (e, sectionId, columnIndex) => {
+    e.preventDefault();
+    const fieldType = e.dataTransfer.getData('fieldType');
+    const newField = createField(fieldType);
+    
+    const updatedFields = formConfig.fields.map(field => {
+      if (field.id === sectionId) {
+        const updatedColumns = [...field.fields];
+        if (!updatedColumns[columnIndex]) {
+          updatedColumns[columnIndex] = [];
         }
-      } else {
-        acc.push(field);
+        updatedColumns[columnIndex].push(newField);
+        return { ...field, fields: updatedColumns };
       }
-      return acc;
-    }, []);
-    updateFormConfig({ fields: updatedFields });
-  };
-
-  const moveField = (fieldId, direction) => {
-    const newFields = [...formConfig.fields];
-    let fieldIndex = -1;
-    let sectionIndex = -1;
-
-    newFields.forEach((field, index) => {
-      if (field.id === fieldId) {
-        fieldIndex = index;
-      } else if (field.type === 'section') {
-        const subFieldIndex = field.fields.findIndex(subField => subField.id === fieldId);
-        if (subFieldIndex !== -1) {
-          fieldIndex = subFieldIndex;
-          sectionIndex = index;
-        }
-      }
+      return field;
     });
 
-    if (fieldIndex === -1) return;
+    updateFormConfig({ fields: updatedFields });
+  };
 
-    if (sectionIndex === -1) {
-      if ((direction === 'up' && fieldIndex > 0) || (direction === 'down' && fieldIndex < newFields.length - 1)) {
-        const temp = newFields[fieldIndex];
-        newFields[fieldIndex] = newFields[fieldIndex + (direction === 'up' ? -1 : 1)];
-        newFields[fieldIndex + (direction === 'up' ? -1 : 1)] = temp;
-      }
-    } else {
-      const sectionFields = newFields[sectionIndex].fields;
-      if ((direction === 'up' && fieldIndex > 0) || (direction === 'down' && fieldIndex < sectionFields.length - 1)) {
-        const temp = sectionFields[fieldIndex];
-        sectionFields[fieldIndex] = sectionFields[fieldIndex + (direction === 'up' ? -1 : 1)];
-        sectionFields[fieldIndex + (direction === 'up' ? -1 : 1)] = temp;
-      }
-    }
+  const createField = (type) => ({
+    id: `field_${Date.now()}`,
+    type,
+    label: `New ${type} field`,
+    name: `field_${Date.now()}`,
+    placeholder: '',
+    options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Option 1', 'Option 2'] : undefined,
+  });
 
-    updateFormConfig({ fields: newFields });
+  const updateField = (fieldId, updates) => {
+    const updatedFields = formConfig.fields.map(section => {
+      if (section.type === 'section') {
+        const updatedColumns = section.fields.map(column =>
+          column.map(field => field.id === fieldId ? { ...field, ...updates } : field)
+        );
+        return { ...section, fields: updatedColumns };
+      }
+      return section;
+    });
+    updateFormConfig({ fields: updatedFields });
+  };
+
+  const removeField = (sectionId, columnIndex, fieldId) => {
+    const updatedFields = formConfig.fields.map(section => {
+      if (section.id === sectionId) {
+        const updatedColumns = section.fields.map((column, idx) => 
+          idx === columnIndex ? column.filter(field => field.id !== fieldId) : column
+        );
+        return { ...section, fields: updatedColumns };
+      }
+      return section;
+    });
+    updateFormConfig({ fields: updatedFields });
+  };
+
+  const moveField = (sectionId, columnIndex, fieldId, direction) => {
+    const updatedFields = formConfig.fields.map(section => {
+      if (section.id === sectionId) {
+        const updatedColumns = section.fields.map((column, idx) => {
+          if (idx === columnIndex) {
+            const fieldIndex = column.findIndex(field => field.id === fieldId);
+            if (fieldIndex === -1) return column;
+            const newIndex = fieldIndex + (direction === 'up' ? -1 : 1);
+            if (newIndex < 0 || newIndex >= column.length) return column;
+            const updatedColumn = [...column];
+            [updatedColumn[fieldIndex], updatedColumn[newIndex]] = [updatedColumn[newIndex], updatedColumn[fieldIndex]];
+            return updatedColumn;
+          }
+          return column;
+        });
+        return { ...section, fields: updatedColumns };
+      }
+      return section;
+    });
+    updateFormConfig({ fields: updatedFields });
   };
 
   const renderField = (field) => {
     switch (field.type) {
-      case 'section':
-        return (
-          <Droppable droppableId={field.id}>
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className={`grid grid-cols-${field.columns} gap-4 border border-dashed border-gray-300 p-4 rounded-lg`}
-              >
-                {Array.from({ length: field.columns }).map((_, colIndex) => (
-                  <div key={colIndex} className="border-r last:border-r-0 border-dashed border-gray-300 p-2">
-                    {field.fields
-                      .filter((_, index) => index % field.columns === colIndex)
-                      .map((subField, index) => (
-                        <Draggable key={subField.id} draggableId={subField.id} index={index}>
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="mb-4 p-2"
-                            >
-                              {renderField(subField)}
-                              {renderFieldControls(subField)}
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                  </div>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        );
-      default:
+      case 'text':
+      case 'email':
+      case 'password':
+      case 'number':
+      case 'tel':
+      case 'date':
         return (
           <div className="mb-4">
             <Label htmlFor={field.name}>{field.label}</Label>
             <Input type={field.type} id={field.name} name={field.name} placeholder={field.placeholder} />
           </div>
         );
+      // Add cases for other field types...
+      default:
+        return null;
     }
   };
 
-  const renderFieldControls = (field) => (
+  const renderFieldControls = (sectionId, columnIndex, field) => (
     <div className="mt-2 flex justify-end space-x-1">
       <Dialog>
         <DialogTrigger asChild>
@@ -201,9 +151,9 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           </div>
         </DialogContent>
       </Dialog>
-      <Button variant="ghost" size="icon" onClick={() => moveField(field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" onClick={() => moveField(field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" onClick={() => removeField(field.id)}><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => moveField(sectionId, columnIndex, field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => moveField(sectionId, columnIndex, field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => removeField(sectionId, columnIndex, field.id)}><Trash2 className="h-4 w-4" /></Button>
     </div>
   );
 
@@ -215,30 +165,27 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           <TabsTrigger value="code">Code</TabsTrigger>
         </TabsList>
         <TabsContent value="preview">
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="preview">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {formConfig.fields.map((field, index) => (
-                    <Draggable key={field.id} draggableId={field.id} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="mb-4 p-2"
-                        >
-                          {renderField(field)}
-                          {field.type !== 'section' && renderFieldControls(field)}
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <div className="p-4">
+            {formConfig.fields.map((section) => (
+              <div key={section.id} className={`grid grid-cols-${section.columns} gap-4 mb-4`}>
+                {Array.from({ length: section.columns }).map((_, columnIndex) => (
+                  <div
+                    key={columnIndex}
+                    className="border border-dashed border-gray-300 p-4 rounded-lg min-h-[100px]"
+                    onDragOver={onDragOver}
+                    onDrop={(e) => onDrop(e, section.id, columnIndex)}
+                  >
+                    {section.fields[columnIndex]?.map((field) => (
+                      <div key={field.id} className="mb-4">
+                        {renderField(field)}
+                        {renderFieldControls(section.id, columnIndex, field)}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </TabsContent>
         <TabsContent value="code">
           <div className="mt-4">
