@@ -71,10 +71,10 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       type,
       label: `Nuevo campo ${type}`,
       name: newName,
+      placeholder: '',
       required: false,
       options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
       alignment: type === 'button' ? 'left' : undefined,
-      fullWidth: type === 'button' ? false : undefined,
     };
   };
 
