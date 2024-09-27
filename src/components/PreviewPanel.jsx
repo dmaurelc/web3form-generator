@@ -204,7 +204,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         }[field.alignment || 'left'];
         return (
           <div className={`mb-4 ${alignmentClass}`}>
-            <Button>{field.label}</Button>
+            <Button className={field.alignment === 'full-width' ? 'w-full' : ''}>{field.label}</Button>
           </div>
         );
       case 'html':
