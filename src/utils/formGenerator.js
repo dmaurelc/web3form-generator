@@ -2,7 +2,7 @@ export const generateFormCode = (formConfig) => {
   const { formType, fields, style } = formConfig;
 
   const generateFieldHtml = (field) => {
-    const { type, label, name, placeholder, required } = field;
+    const { type, label, name, placeholder, required, content } = field;
     const className = style === 'tailwind' ? 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
     const requiredAttr = required ? 'required' : '';
     
@@ -65,7 +65,7 @@ export const generateFormCode = (formConfig) => {
       case 'html':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            ${field.content}
+            ${content}
           </div>
         `;
       default:
@@ -81,7 +81,9 @@ export const generateFormCode = (formConfig) => {
     </div>`
   ).join('');
 
-  const formHtml = `
+  const formH
+
+tml = `
     <form action="https://api.web3forms.com/submit" method="POST" class="${style === 'tailwind' ? 'space-y-6' : 'formulario'}">
       <input type="hidden" name="access_key" value="TU_CLAVE_DE_ACCESO_AQUI">
       ${formFields}
@@ -165,6 +167,10 @@ export const generateFormCSS = (formConfig) => {
     .formulario__seccion {
       display: grid;
       gap: 20px;
+    }
+
+    .formulario__seccion--1-columnas {
+      grid-template-columns: 1fr;
     }
 
     .formulario__seccion--2-columnas {

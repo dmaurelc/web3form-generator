@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, MoveVertical } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
@@ -115,6 +116,26 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
 
   const removeSection = (sectionId) => {
     const updatedFields = formConfig.fields.filter(field => field.id !== sectionId);
+    updateFormConfig({ fields: updatedFields });
+  };
+
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const sourceSection = result.source.droppableId.split('-')[0];
+    const sourceColumn = parseInt(result.source.droppableId.split('-')[1]);
+    const destinationSection = result.destination.droppableId.split('-')[0];
+    const destinationColumn = parseInt(result.destination.droppableId.split('-')[1]);
+
+    const updatedFields = [...formConfig.fields];
+    const sourceSectionIndex = updatedFields.findIndex(section => section.id === sourceSection);
+    const destinationSectionIndex = updatedFields.findIndex(section => section.id === destinationSection);
+
+    const [removedField] = updatedFields[sourceSectionIndex].fields[sourceColumn].splice(result.source.index, 1);
+    updatedFields[destinationSectionIndex].fields[destinationColumn].splice(result.destination.index, 0, removedField);
+
     updateFormConfig({ fields: updatedFields });
   };
 
@@ -330,6 +351,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       <Button variant="ghost" size="icon" onClick={() => moveField(sectionId, columnIndex, field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" onClick={() => moveField(sectionId, columnIndex, field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" onClick={() => removeField(sectionId, columnIndex, field.id)}><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
     </div>
   );
 
@@ -349,28 +371,45 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           <TabsTrigger value="codigo">Código</TabsTrigger>
         </TabsList>
         <TabsContent value="vista previa">
-          <div className="p-4">
-            {formConfig.fields.map((section) => (
-              <div key={section.id} className={`group relative grid grid-cols-${section.columns} gap-4 mb-4 p-4 border border-dashed border-gray-300 rounded-lg`}>
-                {renderSectionControls(section)}
-                {Array.from({ length: section.columns }).map((_, columnIndex) => (
-                  <div
-                    key={columnIndex}
-                    className="border border-dashed border-gray-300 p-4 rounded-lg min-h-[100px]"
-                    onDragOver={onDragOver}
-                    onDrop={(e) => onDrop(e, section.id, columnIndex)}
-                  >
-                    {section.fields[columnIndex]?.map((field) => (
-                      <div key={field.id} className="mb-4">
-                        {renderField(field)}
-                        {renderFieldControls(section.id, columnIndex, field)}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="p-4">
+              {formConfig.fields.map((section) => (
+                <div key={section.id} className={`group relative grid grid-cols-${section.columns} gap-4 mb-4 p-4 border border-dashed border-gray-300 rounded-lg`}>
+                  {renderSectionControls(section)}
+                  {Array.from({ length: section.columns }).map((_, columnIndex) => (
+                    <Droppable key={`${section.id}-${columnIndex}`} droppableId={`${section.id}-${columnIndex}`}>
+                      {(provided) => (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          className="border border-dashed border-gray-300 p-4 rounded-lg min-h-[100px]"
+                          onDragOver={onDragOver}
+                          onDrop={(e) => onDrop(e, section.id, columnIndex)}
+                        >
+                          {section.fields[columnIndex]?.map((field, index) => (
+                            <Draggable key={field.id} draggableId={field.id} index={index}>
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="mb-4"
+                                >
+                                  {renderField(field)}
+                                  {renderFieldControls(section.id, columnIndex, field)}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </DragDropContext>
         </TabsContent>
         <TabsContent value="codigo">
           <div className="mt-4">

@@ -9,7 +9,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       id: `seccion_${Date.now()}`,
       type: 'section',
       columns,
-      fields: [],
+      fields: Array(columns).fill([]),
     };
     updateFormConfig({ fields: [...formConfig.fields, newSection] });
   };
@@ -100,7 +100,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         </div>
         <div>
           <h3 className="text-lg font-medium mb-2">Agregar Secciones</h3>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
+            <Button onClick={() => addSection(1)} variant="outline">1 Columna</Button>
             <Button onClick={() => addSection(2)} variant="outline">2 Columnas</Button>
             <Button onClick={() => addSection(3)} variant="outline">3 Columnas</Button>
             <Button onClick={() => addSection(4)} variant="outline">4 Columnas</Button>
