@@ -22,10 +22,6 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     alert('¡Código copiado al portapapeles!');
   };
 
-  const onDragOver = (e) => {
-    e.preventDefault();
-  };
-
   const onDrop = (e, sectionId, columnIndex) => {
     e.preventDefault();
     const fieldType = e.dataTransfer.getData('fieldType');
@@ -128,26 +124,6 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       }
       return section;
     });
-    updateFormConfig({ fields: updatedFields });
-  };
-
-  const onDragEnd = (result) => {
-    if (!result.destination) {
-      return;
-    }
-
-    const sourceSection = result.source.droppableId.split('-')[0];
-    const sourceColumn = parseInt(result.source.droppableId.split('-')[1]);
-    const destinationSection = result.destination.droppableId.split('-')[0];
-    const destinationColumn = parseInt(result.destination.droppableId.split('-')[1]);
-
-    const updatedFields = [...formConfig.fields];
-    const sourceSectionIndex = updatedFields.findIndex(section => section.id === sourceSection);
-    const destinationSectionIndex = updatedFields.findIndex(section => section.id === destinationSection);
-
-    const [removedField] = updatedFields[sourceSectionIndex].fields[sourceColumn].splice(result.source.index, 1);
-    updatedFields[destinationSectionIndex].fields[destinationColumn].splice(result.destination.index, 0, removedField);
-
     updateFormConfig({ fields: updatedFields });
   };
 
@@ -387,52 +363,58 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         </TabsList>
         <TabsContent value="vista previa">
           <div className="p-4">
-            {formConfig.fields.map((section, sectionIndex) => (
-              <Draggable key={section.id} draggableId={section.id} index={sectionIndex}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className="mb-8 p-4 border border-dashed border-gray-300 rounded-lg"
-                  >
-                    {renderSectionControls(section)}
-                    <div className={`grid grid-cols-${section.columns} gap-4`}>
-                      {Array.from({ length: section.columns }).map((_, columnIndex) => (
-                        <Droppable key={`${section.id}-${columnIndex}`} droppableId={`${section.id}-${columnIndex}`}>
-                          {(provided) => (
-                            <div
-                              {...provided.droppableProps}
-                              ref={provided.innerRef}
-                              className="border border-dashed border-gray-300 p-4 rounded-lg min-h-[100px]"
-                              onDragOver={onDragOver}
-                              onDrop={(e) => onDrop(e, section.id, columnIndex)}
-                            >
-                              {section.fields[columnIndex]?.map((field, index) => (
-                                <Draggable key={field.id} draggableId={field.id} index={index}>
-                                  {(provided) => (
-                                    <div
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      className="mb-4"
-                                    >
-                                      {renderField(field)}
-                                      {renderFieldControls(section.id, columnIndex, field)}
-                                    </div>
-                                  )}
-                                </Draggable>
-                              ))}
-                              {provided.placeholder}
-                            </div>
-                          )}
-                        </Droppable>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </Draggable>
-            ))}
+            <Droppable droppableId="form-fields" type="SECTION">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {formConfig.fields.map((section, index) => (
+                    <Draggable key={section.id} draggableId={section.id} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="mb-8 p-4 border border-dashed border-gray-300 rounded-lg"
+                        >
+                          {renderSectionControls(section)}
+                          <div className={`grid grid-cols-${section.columns} gap-4`}>
+                            {Array.from({ length: section.columns }).map((_, columnIndex) => (
+                              <Droppable key={`${section.id}-${columnIndex}`} droppableId={`${section.id}-${columnIndex}`} type="FIELD">
+                                {(provided) => (
+                                  <div
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                    className="border border-dashed border-gray-300 p-4 rounded-lg min-h-[100px]"
+                                    onDrop={(e) => onDrop(e, section.id, columnIndex)}
+                                  >
+                                    {section.fields[columnIndex]?.map((field, fieldIndex) => (
+                                      <Draggable key={field.id} draggableId={field.id} index={fieldIndex}>
+                                        {(provided) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            className="mb-4"
+                                          >
+                                            {renderField(field)}
+                                            {renderFieldControls(section.id, columnIndex, field)}
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                  </div>
+                                )}
+                              </Droppable>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
           </div>
         </TabsContent>
         <TabsContent value="codigo">

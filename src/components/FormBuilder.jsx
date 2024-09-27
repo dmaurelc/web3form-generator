@@ -15,9 +15,16 @@ const FormBuilder = () => {
   };
 
   const onDragEnd = (result) => {
-    // Handle drag end logic here
-    // This function will be implemented to update the form configuration
-    // based on the drag and drop result
+    if (!result.destination) {
+      return;
+    }
+
+    const { source, destination } = result;
+    const updatedFields = Array.from(formConfig.fields);
+    const [reorderedItem] = updatedFields.splice(source.index, 1);
+    updatedFields.splice(destination.index, 0, reorderedItem);
+
+    updateFormConfig({ fields: updatedFields });
   };
 
   return (
