@@ -105,7 +105,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
             {[1, 2, 3, 4].map((columns) => (
               <Button key={columns} onClick={() => addSection(columns)} variant="outline" className="flex items-center justify-center">
                 <SectionIcon columns={columns} />
-                <span>{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
+                <span className="sr-only">{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
               </Button>
             ))}
           </div>

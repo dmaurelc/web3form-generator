@@ -37,7 +37,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         if (!updatedColumns[columnIndex]) {
           updatedColumns[columnIndex] = [];
         }
-        updatedColumns[columnIndex].push(newField);
+        updatedColumns[columnIndex] = [...updatedColumns[columnIndex], newField];
         return { ...field, fields: updatedColumns };
       }
       return field;
