@@ -469,9 +469,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             <Tabs defaultValue="html">
               <TabsList>
                 <TabsTrigger value="html">HTML</TabsTrigger>
-                {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrig
-
-ger>}
+                {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrigger>}
               </TabsList>
               <TabsContent value="html">
                 <div className="relative">
