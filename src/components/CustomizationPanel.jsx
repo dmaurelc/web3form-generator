@@ -38,15 +38,44 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     updateFormConfig({ fields: updatedFields });
   };
 
-  const createField = (type) => ({
-    id: `campo_${Date.now()}`,
-    type,
-    label: `Nuevo campo ${type}`,
-    name: `${type}`,
-    placeholder: '',
-    required: false,
-    options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
-  });
+  const createField = (type) => {
+    const baseNames = {
+      text: 'name',
+      email: 'email',
+      password: 'password',
+      number: 'number',
+      tel: 'phone',
+      textarea: 'message',
+      select: 'select',
+      checkbox: 'checkbox',
+      radio: 'radio',
+      file: 'file',
+      date: 'date',
+      button: 'button',
+      html: 'html'
+    };
+
+    const baseName = baseNames[type] || type;
+    const existingFields = formConfig.fields.flatMap(section => section.fields.flat());
+    const existingNames = existingFields.map(field => field.name);
+    let newName = baseName;
+    let counter = 1;
+
+    while (existingNames.includes(newName)) {
+      newName = `${baseName}-${counter}`;
+      counter++;
+    }
+
+    return {
+      id: `campo_${Date.now()}`,
+      type,
+      label: `Nuevo campo ${type}`,
+      name: newName,
+      placeholder: '',
+      required: false,
+      options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
+    };
+  };
 
   const fieldTypes = formConfig.formType === 'basico' 
     ? [

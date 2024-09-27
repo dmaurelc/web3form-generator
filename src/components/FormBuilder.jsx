@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import CustomizationPanel from './CustomizationPanel';
 import PreviewPanel from './PreviewPanel';
@@ -11,17 +11,9 @@ const FormBuilder = () => {
     style: 'tailwind',
   });
 
-  useEffect(() => {
-    // Asegurarse de que siempre haya una sección por defecto con un botón
-    if (formConfig.fields.length === 0) {
-      addDefaultSection();
-    } else {
-      const lastSection = formConfig.fields[formConfig.fields.length - 1];
-      if (!lastSection.fields[0].some(field => field.type === 'button')) {
-        addDefaultButton();
-      }
-    }
-  }, [formConfig.fields]);
+  const updateFormConfig = (newConfig) => {
+    setFormConfig(prevConfig => ({ ...prevConfig, ...newConfig }));
+  };
 
   const addDefaultSection = () => {
     const newSection = {
@@ -34,26 +26,6 @@ const FormBuilder = () => {
       ...prevConfig,
       fields: [...prevConfig.fields, newSection],
     }));
-    addDefaultButton();
-  };
-
-  const addDefaultButton = () => {
-    const newButton = {
-      id: `campo_${Date.now()}`,
-      type: 'button',
-      label: 'Enviar',
-      name: 'submit',
-    };
-    setFormConfig(prevConfig => {
-      const updatedFields = [...prevConfig.fields];
-      const lastSection = updatedFields[updatedFields.length - 1];
-      lastSection.fields[0].push(newButton);
-      return { ...prevConfig, fields: updatedFields };
-    });
-  };
-
-  const updateFormConfig = (newConfig) => {
-    setFormConfig(prevConfig => ({ ...prevConfig, ...newConfig }));
   };
 
   const onDragEnd = (result) => {
@@ -89,7 +61,7 @@ const FormBuilder = () => {
   };
 
   const hasActiveFields = formConfig.fields.some(section => 
-    section.fields.some(column => column.length > 0 && column.some(field => field.type !== 'button'))
+    section.fields.some(column => column.length > 0)
   );
 
   return (
@@ -103,7 +75,7 @@ const FormBuilder = () => {
           {!hasActiveFields && (
             <div className="text-center mt-4">
               <p>No hay campos activos en el formulario.</p>
-              <Button onClick={() => addDefaultSection()} className="mt-2">Agregar campos</Button>
+              <Button onClick={addDefaultSection} className="mt-2">Agregar campos</Button>
             </div>
           )}
         </div>
