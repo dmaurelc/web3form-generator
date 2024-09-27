@@ -2,6 +2,7 @@ import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code } from 'lucide-react';
+import SectionIcon from './SectionIcon';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   const addSection = (columns) => {
@@ -101,10 +102,12 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         <div>
           <h3 className="text-lg font-medium mb-2">Agregar Secciones</h3>
           <div className="grid grid-cols-4 gap-2">
-            <Button onClick={() => addSection(1)} variant="outline">1 Columna</Button>
-            <Button onClick={() => addSection(2)} variant="outline">2 Columnas</Button>
-            <Button onClick={() => addSection(3)} variant="outline">3 Columnas</Button>
-            <Button onClick={() => addSection(4)} variant="outline">4 Columnas</Button>
+            {[1, 2, 3, 4].map((columns) => (
+              <Button key={columns} onClick={() => addSection(columns)} variant="outline" className="flex items-center justify-center">
+                <SectionIcon columns={columns} />
+                <span>{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
+              </Button>
+            ))}
           </div>
         </div>
       </div>
