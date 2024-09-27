@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import CustomizationPanel from './CustomizationPanel';
 import PreviewPanel from './PreviewPanel';
-import { Button } from '@/components/ui/button';
 
 const FormBuilder = () => {
   const [formConfig, setFormConfig] = useState({
@@ -13,19 +12,6 @@ const FormBuilder = () => {
 
   const updateFormConfig = (newConfig) => {
     setFormConfig(prevConfig => ({ ...prevConfig, ...newConfig }));
-  };
-
-  const addDefaultSection = () => {
-    const newSection = {
-      id: `seccion_${Date.now()}`,
-      type: 'section',
-      columns: 1,
-      fields: [[]],
-    };
-    setFormConfig(prevConfig => ({
-      ...prevConfig,
-      fields: [...prevConfig.fields, newSection],
-    }));
   };
 
   const onDragEnd = (result) => {
@@ -74,8 +60,7 @@ const FormBuilder = () => {
           <PreviewPanel formConfig={formConfig} updateFormConfig={updateFormConfig} />
           {!hasActiveFields && (
             <div className="text-center mt-4">
-              <p>No hay campos activos en el formulario.</p>
-              <Button onClick={addDefaultSection} className="mt-2">Agregar campos</Button>
+              <p>Agrega un campo para comenzar a crear tu formulario.</p>
             </div>
           )}
         </div>

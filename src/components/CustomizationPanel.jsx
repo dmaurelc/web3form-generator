@@ -7,7 +7,7 @@ import SectionIcon from './SectionIcon';
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   const addSection = (columns = 1) => {
     const newSection = {
-      id: `seccion_${Date.now()}`,
+      id: `section_${Date.now()}`,
       type: 'section',
       columns,
       fields: Array(columns).fill([]),
@@ -27,7 +27,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       lastSection.fields[columnWithLeastFields] = [...lastSection.fields[columnWithLeastFields], newField];
     } else {
       const newSection = {
-        id: `seccion_${Date.now()}`,
+        id: `section_${Date.now()}`,
         type: 'section',
         columns: 1,
         fields: [[newField]],
@@ -67,13 +67,14 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     }
 
     return {
-      id: `campo_${Date.now()}`,
+      id: `field_${Date.now()}`,
       type,
       label: `Nuevo campo ${type}`,
       name: newName,
       placeholder: '',
       required: false,
       options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
+      alignment: type === 'button' ? 'left' : undefined,
     };
   };
 

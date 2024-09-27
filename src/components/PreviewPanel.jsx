@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
 import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Plus, Minus, Copy } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
@@ -115,7 +116,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           if (idx === columnIndex) {
             const fieldIndex = column.findIndex(field => field.id === fieldId);
             if (fieldIndex === -1) return column;
-            const fieldToDuplicate = { ...column[fieldIndex], id: `campo_${Date.now()}` };
+            const fieldToDuplicate = { ...column[fieldIndex], id: `field_${Date.now()}` };
             return [...column.slice(0, fieldIndex + 1), fieldToDuplicate, ...column.slice(fieldIndex + 1)];
           }
           return column;
@@ -195,8 +196,14 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           </div>
         );
       case 'button':
+        const alignmentClass = {
+          left: 'text-left',
+          center: 'text-center',
+          right: 'text-right',
+          'full-width': 'w-full',
+        }[field.alignment || 'left'];
         return (
-          <div className="mb-4">
+          <div className={`mb-4 ${alignmentClass}`}>
             <Button>{field.label}</Button>
           </div>
         );
@@ -246,6 +253,25 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
               />
               <Label htmlFor="required">Campo obligatorio</Label>
             </div>
+            {field.type === 'button' && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="alignment">Alineación</Label>
+                <Select
+                  value={field.alignment || 'left'}
+                  onValueChange={(value) => updateField(field.id, { alignment: value })}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Selecciona la alineación" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="left">Izquierda</SelectItem>
+                    <SelectItem value="center">Centrado</SelectItem>
+                    <SelectItem value="right">Derecha</SelectItem>
+                    <SelectItem value="full-width">Ancho completo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
