@@ -236,23 +236,27 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="placeholder">Placeholder</Label>
-              <Input
-                id="placeholder"
-                value={field.placeholder}
-                onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
-                className="col-span-3"
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="required"
-                checked={field.required}
-                onCheckedChange={(checked) => updateField(field.id, { required: checked })}
-              />
-              <Label htmlFor="required">Campo obligatorio</Label>
-            </div>
+            {field.type !== 'button' && field.type !== 'html' && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="placeholder">Placeholder</Label>
+                <Input
+                  id="placeholder"
+                  value={field.placeholder}
+                  onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+            )}
+            {field.type !== 'button' && field.type !== 'html' && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="required"
+                  checked={field.required}
+                  onCheckedChange={(checked) => updateField(field.id, { required: checked })}
+                />
+                <Label htmlFor="required">Campo obligatorio</Label>
+              </div>
+            )}
             {field.type === 'button' && (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="alignment">Alineación</Label>
@@ -278,7 +282,9 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeField(sectionId, columnIndex, field.id)}><Trash2 className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
+      {field.type !== 'button' && field.type !== 'html' && (
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
+      )}
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => duplicateField(sectionId, columnIndex, field.id)}><Copy className="h-4 w-4" /></Button>
     </div>
   );
