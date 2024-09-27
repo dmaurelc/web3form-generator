@@ -2,8 +2,9 @@ export const generateFormCode = (formConfig) => {
   const { formType, fields, style } = formConfig;
 
   const generateFieldHtml = (field) => {
-    const { type, label, name, placeholder } = field;
+    const { type, label, name, placeholder, required } = field;
     const className = style === 'tailwind' ? 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
+    const requiredAttr = required ? 'required' : '';
     
     switch (type) {
       case 'text':
@@ -14,22 +15,22 @@ export const generateFormCode = (formConfig) => {
       case 'date':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}</label>
-            <input type="${type}" id="${name}" name="${name}" placeholder="${placeholder}" class="${className}">
+            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <input type="${type}" id="${name}" name="${name}" placeholder="${placeholder}" class="${className}" ${requiredAttr}>
           </div>
         `;
       case 'textarea':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}</label>
-            <textarea id="${name}" name="${name}" rows="3" class="${className}" placeholder="${placeholder}"></textarea>
+            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <textarea id="${name}" name="${name}" rows="3" class="${className}" placeholder="${placeholder}" ${requiredAttr}></textarea>
           </div>
         `;
       case 'select':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}</label>
-            <select id="${name}" name="${name}" class="${className}">
+            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <select id="${name}" name="${name}" class="${className}" ${requiredAttr}>
               <option value="">Selecciona una opción</option>
               ${field.options.map(option => `<option value="${option}">${option}</option>`).join('\n')}
             </select>
@@ -39,10 +40,10 @@ export const generateFormCode = (formConfig) => {
       case 'checkbox':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <span class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}</span>
+            <span class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</span>
             ${field.options.map(option => `
               <div class="${style === 'tailwind' ? 'flex items-center' : 'formulario__opcion'}">
-                <input type="${type}" id="${name}_${option}" name="${name}" value="${option}" class="${className}">
+                <input type="${type}" id="${name}_${option}" name="${name}" value="${option}" class="${className}" ${requiredAttr}>
                 <label for="${name}_${option}" class="${style === 'tailwind' ? 'ml-2 block text-sm text-gray-900' : 'formulario__opcion-etiqueta'}">${option}</label>
               </div>
             `).join('\n')}
@@ -51,8 +52,20 @@ export const generateFormCode = (formConfig) => {
       case 'file':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
-            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}</label>
-            <input type="file" id="${name}" name="${name}" class="${className}">
+            <label for="${name}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <input type="file" id="${name}" name="${name}" class="${className}" ${requiredAttr}>
+          </div>
+        `;
+      case 'button':
+        return `
+          <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
+            <button type="button" class="${style === 'tailwind' ? 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' : 'formulario__boton'}">${label}</button>
+          </div>
+        `;
+      case 'html':
+        return `
+          <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
+            ${field.content}
           </div>
         `;
       default:
@@ -61,9 +74,11 @@ export const generateFormCode = (formConfig) => {
   };
 
   const formFields = fields.map(section => 
-    section.fields.map(column => 
-      column.map(generateFieldHtml).join('')
-    ).join('')
+    `<div class="${style === 'tailwind' ? `grid grid-cols-${section.columns} gap-4` : `formulario__seccion formulario__seccion--${section.columns}-columnas`}">
+      ${section.fields.map(column => 
+        column.map(generateFieldHtml).join('')
+      ).join('')}
+    </div>`
   ).join('');
 
   const formHtml = `
@@ -130,6 +145,7 @@ export const generateFormCSS = (formConfig) => {
       margin-left: 5px;
     }
 
+    .formulario__boton,
     .formulario__enviar {
       width: 100%;
       padding: 10px;
@@ -141,8 +157,26 @@ export const generateFormCSS = (formConfig) => {
       cursor: pointer;
     }
 
+    .formulario__boton:hover,
     .formulario__enviar:hover {
       background-color: #357ae8;
+    }
+
+    .formulario__seccion {
+      display: grid;
+      gap: 20px;
+    }
+
+    .formulario__seccion--2-columnas {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .formulario__seccion--3-columnas {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .formulario__seccion--4-columnas {
+      grid-template-columns: repeat(4, 1fr);
     }
   `;
 };

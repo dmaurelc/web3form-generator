@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone } from 'lucide-react';
+import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code } from 'lucide-react';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   const addSection = (columns) => {
@@ -20,6 +20,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         { type: 'email', icon: Mail, label: 'Correo' },
         { type: 'number', icon: Hash, label: 'Número' },
         { type: 'tel', icon: Phone, label: 'Teléfono' },
+        { type: 'button', icon: Type, label: 'Botón' },
+        { type: 'html', icon: Code, label: 'HTML' },
       ]
     : [
         { type: 'text', icon: TextIcon, label: 'Texto' },
@@ -33,6 +35,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         { type: 'email', icon: Mail, label: 'Correo' },
         { type: 'password', icon: Lock, label: 'Contraseña' },
         { type: 'tel', icon: Phone, label: 'Teléfono' },
+        { type: 'button', icon: Type, label: 'Botón' },
+        { type: 'html', icon: Code, label: 'HTML' },
       ];
 
   const onDragStart = (e, type) => {

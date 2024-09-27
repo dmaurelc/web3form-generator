@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle } from 'lucide-react';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
+  const [editingLabel, setEditingLabel] = useState(null);
 
   const formCode = generateFormCode(formConfig);
   const formCSS = formConfig.style === 'css' ? generateFormCSS(formConfig) : '';
@@ -49,6 +51,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     label: `Nuevo campo ${type}`,
     name: `campo_${Date.now()}`,
     placeholder: '',
+    required: false,
     options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
   });
 
@@ -125,11 +128,160 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       case 'date':
         return (
           <div className="mb-4">
-            <Label htmlFor={field.name}>{field.label}</Label>
-            <Input type={field.type} id={field.name} name={field.name} placeholder={field.placeholder} />
+            <Label htmlFor={field.name}>
+              {editingLabel === field.id ? (
+                <Input
+                  value={field.label}
+                  onChange={(e) => updateField(field.id, { label: e.target.value })}
+                  onBlur={() => setEditingLabel(null)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setEditingLabel(null);
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span onDoubleClick={() => setEditingLabel(field.id)}>
+                  {field.label}
+                  {field.required && <span className="text-red-500 ml-1">*</span>}
+                </span>
+              )}
+            </Label>
+            <Input type={field.type} id={field.name} name={field.name} placeholder={field.placeholder} required={field.required} />
           </div>
         );
-      // Añadir casos para otros tipos de campo...
+      case 'textarea':
+        return (
+          <div className="mb-4">
+            <Label htmlFor={field.name}>
+              {editingLabel === field.id ? (
+                <Input
+                  value={field.label}
+                  onChange={(e) => updateField(field.id, { label: e.target.value })}
+                  onBlur={() => setEditingLabel(null)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setEditingLabel(null);
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span onDoubleClick={() => setEditingLabel(field.id)}>
+                  {field.label}
+                  {field.required && <span className="text-red-500 ml-1">*</span>}
+                </span>
+              )}
+            </Label>
+            <textarea id={field.name} name={field.name} placeholder={field.placeholder} required={field.required} className="w-full p-2 border rounded" />
+          </div>
+        );
+      case 'select':
+        return (
+          <div className="mb-4">
+            <Label htmlFor={field.name}>
+              {editingLabel === field.id ? (
+                <Input
+                  value={field.label}
+                  onChange={(e) => updateField(field.id, { label: e.target.value })}
+                  onBlur={() => setEditingLabel(null)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setEditingLabel(null);
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span onDoubleClick={() => setEditingLabel(field.id)}>
+                  {field.label}
+                  {field.required && <span className="text-red-500 ml-1">*</span>}
+                </span>
+              )}
+            </Label>
+            <select id={field.name} name={field.name} required={field.required} className="w-full p-2 border rounded">
+              {field.options.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+        );
+      case 'radio':
+      case 'checkbox':
+        return (
+          <div className="mb-4">
+            <Label>
+              {editingLabel === field.id ? (
+                <Input
+                  value={field.label}
+                  onChange={(e) => updateField(field.id, { label: e.target.value })}
+                  onBlur={() => setEditingLabel(null)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setEditingLabel(null);
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span onDoubleClick={() => setEditingLabel(field.id)}>
+                  {field.label}
+                  {field.required && <span className="text-red-500 ml-1">*</span>}
+                </span>
+              )}
+            </Label>
+            {field.options.map((option, index) => (
+              <div key={index} className="flex items-center">
+                <input
+                  type={field.type}
+                  id={`${field.name}_${index}`}
+                  name={field.name}
+                  value={option}
+                  required={field.required}
+                  className="mr-2"
+                />
+                <Label htmlFor={`${field.name}_${index}`}>{option}</Label>
+              </div>
+            ))}
+          </div>
+        );
+      case 'file':
+        return (
+          <div className="mb-4">
+            <Label htmlFor={field.name}>
+              {editingLabel === field.id ? (
+                <Input
+                  value={field.label}
+                  onChange={(e) => updateField(field.id, { label: e.target.value })}
+                  onBlur={() => setEditingLabel(null)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setEditingLabel(null);
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span onDoubleClick={() => setEditingLabel(field.id)}>
+                  {field.label}
+                  {field.required && <span className="text-red-500 ml-1">*</span>}
+                </span>
+              )}
+            </Label>
+            <input type="file" id={field.name} name={field.name} required={field.required} className="w-full p-2 border rounded" />
+          </div>
+        );
+      case 'button':
+        return (
+          <div className="mb-4">
+            <Button type="button">{field.label}</Button>
+          </div>
+        );
+      case 'html':
+        return (
+          <div className="mb-4" dangerouslySetInnerHTML={{ __html: field.content }} />
+        );
       default:
         return null;
     }
@@ -163,6 +315,14 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
                 className="col-span-3"
               />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="required"
+                checked={field.required}
+                onCheckedChange={(checked) => updateField(field.id, { required: checked })}
+              />
+              <Label htmlFor="required">Campo obligatorio</Label>
             </div>
           </div>
         </DialogContent>
