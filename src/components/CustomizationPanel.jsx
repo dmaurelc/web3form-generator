@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code } from 'lucide-react';
+import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code, Plus, Minus } from 'lucide-react';
 import SectionIcon from './SectionIcon';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
@@ -13,6 +13,51 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       fields: Array(columns).fill([]),
     };
     updateFormConfig({ fields: [...formConfig.fields, newSection] });
+  };
+
+  const addField = (type) => {
+    const newField = createField(type);
+    const updatedFields = [...formConfig.fields];
+    const lastSection = updatedFields[updatedFields.length - 1];
+    
+    if (lastSection && lastSection.type === 'section') {
+      const columnWithLeastFields = lastSection.fields.reduce((minIndex, column, index, array) => 
+        column.length < array[minIndex].length ? index : minIndex, 0);
+      
+      lastSection.fields[columnWithLeastFields] = [...lastSection.fields[columnWithLeastFields], newField];
+    } else {
+      const newSection = {
+        id: `seccion_${Date.now()}`,
+        type: 'section',
+        columns: 1,
+        fields: [[newField]],
+      };
+      updatedFields.push(newSection);
+    }
+    
+    updateFormConfig({ fields: updatedFields });
+  };
+
+  const createField = (type) => ({
+    id: `campo_${Date.now()}`,
+    type,
+    label: `Nuevo campo ${type}`,
+    name: `campo_${Date.now()}`,
+    placeholder: '',
+    required: false,
+    options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
+  });
+
+  const adjustSectionColumns = (sectionId, adjustment) => {
+    const updatedFields = formConfig.fields.map(section => {
+      if (section.id === sectionId) {
+        const newColumns = Math.max(1, Math.min(4, section.columns + adjustment));
+        const newFields = Array(newColumns).fill().map((_, i) => section.fields[i] || []);
+        return { ...section, columns: newColumns, fields: newFields };
+      }
+      return section;
+    });
+    updateFormConfig({ fields: updatedFields });
   };
 
   const fieldTypes = formConfig.formType === 'basico' 
@@ -86,7 +131,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
                 key={field.type}
                 draggable
                 onDragStart={(e) => onDragStart(e, field.type)}
-                className="flex items-center justify-center cursor-move"
+                onClick={() => addField(field.type)}
+                className="flex items-center justify-center cursor-pointer"
               >
                 <Button
                   className="w-full flex items-center justify-center space-x-2 py-2"
@@ -110,6 +156,28 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
             ))}
           </div>
         </div>
+        {formConfig.fields.map((section, index) => (
+          <div key={section.id} className="flex items-center space-x-2">
+            <SectionIcon columns={section.columns} />
+            <span>Sección {index + 1}</span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => adjustSectionColumns(section.id, 1)}
+              disabled={section.columns >= 4}
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => adjustSectionColumns(section.id, -1)}
+              disabled={section.columns <= 1}
+            >
+              <Minus className="w-4 h-4" />
+            </Button>
+          </div>
+        ))}
       </div>
     </div>
   );

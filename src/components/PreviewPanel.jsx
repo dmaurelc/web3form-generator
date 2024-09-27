@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, MoveVertical } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
