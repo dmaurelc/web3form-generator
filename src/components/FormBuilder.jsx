@@ -4,7 +4,7 @@ import PreviewPanel from './PreviewPanel';
 
 const FormBuilder = () => {
   const [formConfig, setFormConfig] = useState({
-    formType: 'basic',
+    formType: 'basico',
     fields: [],
     style: 'tailwind',
   });

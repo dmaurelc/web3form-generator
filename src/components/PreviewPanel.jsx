@@ -8,14 +8,15 @@ import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
 import { Edit, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
-  const [activeTab, setActiveTab] = useState('preview');
+  const [activeTab, setActiveTab] = useState('vista previa');
+
   const formCode = generateFormCode(formConfig);
   const formCSS = formConfig.style === 'css' ? generateFormCSS(formConfig) : '';
 
-  const copyCode = () => {
-    const codeToCopy = formConfig.style === 'css' ? `${formCode}\n\n${formCSS}` : formCode;
-    navigator.clipboard.writeText(codeToCopy);
-    alert('Code copied to clipboard!');
+  const copiarCodigo = () => {
+    const codigoACopiar = formConfig.style === 'css' ? `${formCode}\n\n${formCSS}` : formCode;
+    navigator.clipboard.writeText(codigoACopiar);
+    alert('¡Código copiado al portapapeles!');
   };
 
   const onDragOver = (e) => {
@@ -43,12 +44,12 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   };
 
   const createField = (type) => ({
-    id: `field_${Date.now()}`,
+    id: `campo_${Date.now()}`,
     type,
-    label: `New ${type} field`,
-    name: `field_${Date.now()}`,
+    label: `Nuevo campo ${type}`,
+    name: `campo_${Date.now()}`,
     placeholder: '',
-    options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Option 1', 'Option 2'] : undefined,
+    options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
   });
 
   const updateField = (fieldId, updates) => {
@@ -99,6 +100,21 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     updateFormConfig({ fields: updatedFields });
   };
 
+  const moveSection = (sectionId, direction) => {
+    const sectionIndex = formConfig.fields.findIndex(field => field.id === sectionId);
+    if (sectionIndex === -1) return;
+    const newIndex = sectionIndex + (direction === 'up' ? -1 : 1);
+    if (newIndex < 0 || newIndex >= formConfig.fields.length) return;
+    const updatedFields = [...formConfig.fields];
+    [updatedFields[sectionIndex], updatedFields[newIndex]] = [updatedFields[newIndex], updatedFields[sectionIndex]];
+    updateFormConfig({ fields: updatedFields });
+  };
+
+  const removeSection = (sectionId) => {
+    const updatedFields = formConfig.fields.filter(field => field.id !== sectionId);
+    updateFormConfig({ fields: updatedFields });
+  };
+
   const renderField = (field) => {
     switch (field.type) {
       case 'text':
@@ -113,7 +129,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             <Input type={field.type} id={field.name} name={field.name} placeholder={field.placeholder} />
           </div>
         );
-      // Add cases for other field types...
+      // Añadir casos para otros tipos de campo...
       default:
         return null;
     }
@@ -127,11 +143,11 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Field</DialogTitle>
+            <DialogTitle>Editar Campo</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="label">Label</Label>
+              <Label htmlFor="label">Etiqueta</Label>
               <Input
                 id="label"
                 value={field.label}
@@ -157,17 +173,26 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     </div>
   );
 
+  const renderSectionControls = (section) => (
+    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <Button variant="ghost" size="icon" onClick={() => moveSection(section.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => moveSection(section.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => removeSection(section.id)}><Trash2 className="h-4 w-4" /></Button>
+    </div>
+  );
+
   return (
     <div className="bg-white rounded-lg shadow">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="preview">Preview</TabsTrigger>
-          <TabsTrigger value="code">Code</TabsTrigger>
+          <TabsTrigger value="vista previa">Vista Previa</TabsTrigger>
+          <TabsTrigger value="codigo">Código</TabsTrigger>
         </TabsList>
-        <TabsContent value="preview">
+        <TabsContent value="vista previa">
           <div className="p-4">
             {formConfig.fields.map((section) => (
-              <div key={section.id} className={`grid grid-cols-${section.columns} gap-4 mb-4`}>
+              <div key={section.id} className={`group relative grid grid-cols-${section.columns} gap-4 mb-4 p-4 border border-dashed border-gray-300 rounded-lg`}>
+                {renderSectionControls(section)}
                 {Array.from({ length: section.columns }).map((_, columnIndex) => (
                   <div
                     key={columnIndex}
@@ -187,7 +212,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             ))}
           </div>
         </TabsContent>
-        <TabsContent value="code">
+        <TabsContent value="codigo">
           <div className="mt-4">
             <Tabs defaultValue="html">
               <TabsList>
@@ -207,8 +232,8 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 </TabsContent>
               )}
             </Tabs>
-            <Button onClick={copyCode} className="mt-4">
-              Copy Code
+            <Button onClick={copiarCodigo} className="mt-4">
+              Copiar Código
             </Button>
           </div>
         </TabsContent>

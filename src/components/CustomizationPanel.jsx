@@ -6,7 +6,7 @@ import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Has
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   const addSection = (columns) => {
     const newSection = {
-      id: `section_${Date.now()}`,
+      id: `seccion_${Date.now()}`,
       type: 'section',
       columns,
       fields: [],
@@ -14,19 +14,26 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     updateFormConfig({ fields: [...formConfig.fields, newSection] });
   };
 
-  const fieldTypes = [
-    { type: 'text', icon: TextIcon },
-    { type: 'textarea', icon: AlignJustify },
-    { type: 'checkbox', icon: CheckSquare },
-    { type: 'radio', icon: Radio },
-    { type: 'select', icon: TextIcon },
-    { type: 'file', icon: FileText },
-    { type: 'date', icon: CalendarIcon },
-    { type: 'number', icon: Hash },
-    { type: 'email', icon: Mail },
-    { type: 'password', icon: Lock },
-    { type: 'tel', icon: Phone },
-  ];
+  const fieldTypes = formConfig.formType === 'basico' 
+    ? [
+        { type: 'text', icon: TextIcon, label: 'Texto' },
+        { type: 'email', icon: Mail, label: 'Correo' },
+        { type: 'number', icon: Hash, label: 'Número' },
+        { type: 'tel', icon: Phone, label: 'Teléfono' },
+      ]
+    : [
+        { type: 'text', icon: TextIcon, label: 'Texto' },
+        { type: 'textarea', icon: AlignJustify, label: 'Área de texto' },
+        { type: 'checkbox', icon: CheckSquare, label: 'Casilla' },
+        { type: 'radio', icon: Radio, label: 'Radio' },
+        { type: 'select', icon: TextIcon, label: 'Selección' },
+        { type: 'file', icon: FileText, label: 'Archivo' },
+        { type: 'date', icon: CalendarIcon, label: 'Fecha' },
+        { type: 'number', icon: Hash, label: 'Número' },
+        { type: 'email', icon: Mail, label: 'Correo' },
+        { type: 'password', icon: Lock, label: 'Contraseña' },
+        { type: 'tel', icon: Phone, label: 'Teléfono' },
+      ];
 
   const onDragStart = (e, type) => {
     e.dataTransfer.setData('fieldType', type);
@@ -34,31 +41,31 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">Customize Your Form</h2>
+      <h2 className="text-xl font-semibold mb-4">Personaliza tu Formulario</h2>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Form Type</label>
+          <label className="block text-sm font-medium text-gray-700">Tipo de Formulario</label>
           <Select
             value={formConfig.formType}
             onValueChange={(value) => updateFormConfig({ formType: value })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select form type" />
+              <SelectValue placeholder="Selecciona el tipo de formulario" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="basic">Basic</SelectItem>
-              <SelectItem value="advanced">Advanced</SelectItem>
+              <SelectItem value="basico">Básico</SelectItem>
+              <SelectItem value="avanzado">Avanzado</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Style</label>
+          <label className="block text-sm font-medium text-gray-700">Estilo</label>
           <Select
             value={formConfig.style}
             onValueChange={(value) => updateFormConfig({ style: value })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select style" />
+              <SelectValue placeholder="Selecciona el estilo" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="tailwind">Tailwind CSS</SelectItem>
@@ -67,7 +74,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
           </Select>
         </div>
         <div>
-          <h3 className="text-lg font-medium mb-2">Add Fields</h3>
+          <h3 className="text-lg font-medium mb-2">Agregar Campos</h3>
           <div className="grid grid-cols-3 gap-2">
             {fieldTypes.map((field) => (
               <div
@@ -81,18 +88,18 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
                   variant="outline"
                 >
                   <field.icon className="w-4 h-4" />
-                  <span>{field.type}</span>
+                  <span>{field.label}</span>
                 </Button>
               </div>
             ))}
           </div>
         </div>
         <div>
-          <h3 className="text-lg font-medium mb-2">Add Sections</h3>
+          <h3 className="text-lg font-medium mb-2">Agregar Secciones</h3>
           <div className="grid grid-cols-3 gap-2">
-            <Button onClick={() => addSection(2)} variant="outline">2 Columns</Button>
-            <Button onClick={() => addSection(3)} variant="outline">3 Columns</Button>
-            <Button onClick={() => addSection(4)} variant="outline">4 Columns</Button>
+            <Button onClick={() => addSection(2)} variant="outline">2 Columnas</Button>
+            <Button onClick={() => addSection(3)} variant="outline">3 Columnas</Button>
+            <Button onClick={() => addSection(4)} variant="outline">4 Columnas</Button>
           </div>
         </div>
       </div>
