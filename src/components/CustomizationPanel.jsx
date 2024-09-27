@@ -5,7 +5,7 @@ import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Has
 import SectionIcon from './SectionIcon';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
-  const addSection = (columns) => {
+  const addSection = (columns = 1) => {
     const newSection = {
       id: `seccion_${Date.now()}`,
       type: 'section',
