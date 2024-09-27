@@ -2,7 +2,7 @@ import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Input, TextArea, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone } from 'lucide-react';
+import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone } from 'lucide-react';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   const addField = (type) => {
@@ -36,11 +36,11 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   };
 
   const fieldTypes = [
-    { type: 'text', icon: Input },
-    { type: 'textarea', icon: TextArea },
+    { type: 'text', icon: TextIcon },
+    { type: 'textarea', icon: AlignJustify },
     { type: 'checkbox', icon: CheckSquare },
     { type: 'radio', icon: Radio },
-    { type: 'select', icon: Input },
+    { type: 'select', icon: TextIcon },
     { type: 'file', icon: FileText },
     { type: 'date', icon: CalendarIcon },
     { type: 'number', icon: Hash },
