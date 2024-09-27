@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2, Copy, Star, Minus, Plus, AlertCircle } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, Copy, Star, Minus, Plus } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import SliderField from './SliderField';
 import NumberIncrementField from './NumberIncrementField';
@@ -201,6 +201,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           <div className="mb-4">
             {labelElement}
             <select id={field.id} className="w-full p-2 border rounded">
+              <option value="">Selecciona una opción</option>
               {field.options.map((option, index) => (
                 <option key={index} value={option.value}>
                   {option.label}
@@ -389,9 +390,6 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeField(sectionId, columnIndex, field.id)}><Trash2 className="h-4 w-4" /></Button>
-      {field.type !== 'button' && field.type !== 'html' && (
-        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
-      )}
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => duplicateField(sectionId, columnIndex, field.id)}><Copy className="h-4 w-4" /></Button>
     </div>
   );

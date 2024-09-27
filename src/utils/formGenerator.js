@@ -2,7 +2,7 @@ export const generateFormCode = (formConfig) => {
   const { formType, fields, style } = formConfig;
 
   const generateFieldHtml = (field, index) => {
-    const { type, label, name, placeholder, required, content, min, max, step, value } = field;
+    const { type, label, name, placeholder, required, content, min, max, step, value, options } = field;
     const className = style === 'tailwind' ? 'w-full mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
     const requiredAttr = required ? 'required' : '';
     const fieldName = generateUniqueName(name, index);
@@ -33,7 +33,7 @@ export const generateFormCode = (formConfig) => {
             <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
             <select id="${fieldName}" name="${fieldName}" class="${className}" ${requiredAttr}>
               <option value="">Selecciona una opción</option>
-              ${field.options.map(option => `<option value="${option}">${option}</option>`).join('\n')}
+              ${options.map(option => `<option value="${option.value}">${option.label}</option>`).join('\n')}
             </select>
           </div>
         `;
@@ -42,10 +42,10 @@ export const generateFormCode = (formConfig) => {
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
             <span class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</span>
-            ${field.options.map((option, optionIndex) => `
+            ${options.map((option, optionIndex) => `
               <div class="${style === 'tailwind' ? 'flex items-center' : 'formulario__opcion'}">
-                <input type="${type}" id="${fieldName}_${optionIndex}" name="${fieldName}" value="${option}" class="${className}" ${requiredAttr}>
-                <label for="${fieldName}_${optionIndex}" class="${style === 'tailwind' ? 'ml-2 block text-sm text-gray-900' : 'formulario__opcion-etiqueta'}">${option}</label>
+                <input type="${type}" id="${fieldName}_${optionIndex}" name="${fieldName}" value="${option.value}" class="${className}" ${requiredAttr}>
+                <label for="${fieldName}_${optionIndex}" class="${style === 'tailwind' ? 'ml-2 block text-sm text-gray-900' : 'formulario__opcion-etiqueta'}">${option.label}</label>
               </div>
             `).join('\n')}
           </div>
@@ -95,7 +95,8 @@ export const generateFormCode = (formConfig) => {
             <div class="flex items-center">
               <button type="button" onclick="decrement('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-l' : 'formulario__boton-decremento'}">-</button>
               <input type="number" id="${fieldName}" name="${fieldName}" value="${value}" min="${min}" max="${max}" step="${step}" class="${className} text-center" ${requiredAttr}>
-              <button type="button" onclick="increment('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-r' : 'formulario__boton-incremento'}">+</button>
+              <button type="button" onclick="increment('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-r' : 'formul
+ario__boton-incremento'}">+</button>
             </div>
             <script>
               function increment(id) {
