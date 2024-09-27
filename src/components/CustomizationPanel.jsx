@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code } from 'lucide-react';
+import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code, Sliders, PlusSquare } from 'lucide-react';
 import SectionIcon from './SectionIcon';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
@@ -52,7 +52,9 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       file: 'file',
       date: 'date',
       button: 'button',
-      html: 'html'
+      html: 'html',
+      slider: 'slider',
+      numberIncrement: 'numberIncrement'
     };
 
     const baseName = baseNames[type] || type;
@@ -75,6 +77,10 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
       required: false,
       options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Opción 1', 'Opción 2'] : undefined,
       alignment: type === 'button' ? 'left' : undefined,
+      min: type === 'slider' ? 0 : undefined,
+      max: type === 'slider' ? 100 : undefined,
+      step: type === 'slider' || type === 'numberIncrement' ? 1 : undefined,
+      value: type === 'slider' || type === 'numberIncrement' ? 0 : undefined,
     };
   };
 
@@ -101,6 +107,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         { type: 'tel', icon: Phone, label: 'Teléfono' },
         { type: 'button', icon: Type, label: 'Botón' },
         { type: 'html', icon: Code, label: 'HTML' },
+        { type: 'slider', icon: Sliders, label: 'Slider' },
+        { type: 'numberIncrement', icon: PlusSquare, label: 'Incrementador' },
       ];
 
   const onDragStart = (e, type) => {

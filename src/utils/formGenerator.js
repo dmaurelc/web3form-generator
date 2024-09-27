@@ -2,7 +2,7 @@ export const generateFormCode = (formConfig) => {
   const { formType, fields, style } = formConfig;
 
   const generateFieldHtml = (field, index) => {
-    const { type, label, name, placeholder, required, content } = field;
+    const { type, label, name, placeholder, required, content, min, max, step, value } = field;
     const className = style === 'tailwind' ? 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `formulario__${type}`;
     const requiredAttr = required ? 'required' : '';
     const fieldName = generateUniqueName(name, index);
@@ -16,6 +16,7 @@ export const generateFormCode = (formConfig) => {
       case 'date':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
+            
             <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
             <input type="${type}" id="${fieldName}" name="${fieldName}" placeholder="${placeholder}" class="${className}" ${requiredAttr}>
           </div>
@@ -67,6 +68,46 @@ export const generateFormCode = (formConfig) => {
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
             ${content}
+          </div>
+        `;
+      case 'slider':
+        return `
+          <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
+            <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <input type="range" id="${fieldName}" name="${fieldName}" min="${min}" max="${max}" step="${step}" value="${value}" class="${className}" ${requiredAttr}>
+            <span class="text-sm text-gray-500">Valor: <span id="${fieldName}_value">${value}</span></span>
+            <script>
+              document.getElementById('${fieldName}').addEventListener('input', function() {
+                document.getElementById('${fieldName}_value').textContent = this.value;
+              });
+            </script>
+          </div>
+        `;
+      case 'numberIncrement':
+        return `
+          <div class="${style === 'tailwind' ? 'mb-4' : 'formulario__grupo'}">
+            <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'formulario__etiqueta'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
+            <div class="flex items-center">
+              <button type="button" onclick="decrement('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-l' : 'formulario__boton-decremento'}">-</button>
+              <input type="number" id="${fieldName}" name="${fieldName}" value="${value}" min="${min}" max="${max}" step="${step}" class="${className} text-center" ${requiredAttr}>
+              <button type="button" onclick="increment('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-r' : 'formulario__boton-incremento'}">+</button>
+            </div>
+            <script>
+              function increment(id) {
+                var input = document.getElementById(id);
+                var value = parseFloat(input.value);
+                var step = parseFloat(input.step);
+                var max = parseFloat(input.max);
+                input.value = Math.min(value + step, max);
+              }
+              function decrement(id) {
+                var input = document.getElementById(id);
+                var value = parseFloat(input.value);
+                var step = parseFloat(input.step);
+                var min = parseFloat(input.min);
+                input.value = Math.max(value - step, min);
+              }
+            </script>
           </div>
         `;
       default:
@@ -125,7 +166,8 @@ export const generateFormCSS = (formConfig) => {
     .formulario__date,
     .formulario__textarea,
     .formulario__select,
-    .formulario__file {
+    .formulario__file,
+    .formulario__slider {
       width: 100%;
       padding: 8px;
       border: 1px solid #ddd;
@@ -145,8 +187,9 @@ export const generateFormCSS = (formConfig) => {
       margin-left: 5px;
     }
 
-    .formulario__boton {
-      width: 100%;
+    .formulario__boton,
+    .formulario__boton-decremento,
+    .formulario__boton-incremento {
       padding: 10px;
       background-color: #4a90e2;
       color: white;
@@ -156,7 +199,9 @@ export const generateFormCSS = (formConfig) => {
       cursor: pointer;
     }
 
-    .formulario__boton:hover {
+    .formulario__boton:hover,
+    .formulario__boton-decremento:hover,
+    .formulario__boton-incremento:hover {
       background-color: #357ae8;
     }
 

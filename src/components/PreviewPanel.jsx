@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
 import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Plus, Minus, Copy } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+import SliderField from './SliderField';
+import NumberIncrementField from './NumberIncrementField';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
@@ -211,6 +213,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         return (
           <div className="mb-4" dangerouslySetInnerHTML={{ __html: field.content }}></div>
         );
+      case 'slider':
+        return <SliderField field={field} updateField={updateField} />;
+      case 'numberIncrement':
+        return <NumberIncrementField field={field} updateField={updateField} />;
       default:
         return null;
     }
