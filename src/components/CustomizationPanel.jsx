@@ -123,7 +123,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
                 className="flex items-center justify-center cursor-pointer"
               >
                 <Button
-                  className="w-full flex items-center justify-center space-x-2 py-2"
+                  className="w-full h-10 flex items-center justify-center space-x-2 px-2 py-1 text-xs"
                   variant="outline"
                 >
                   <field.icon className="w-4 h-4" />
@@ -137,9 +137,14 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
           <h3 className="text-lg font-medium mb-2">Agregar Secciones</h3>
           <div className="grid grid-cols-2 gap-2">
             {[1, 2, 3, 4].map((columns) => (
-              <Button key={columns} onClick={() => addSection(columns)} variant="outline" className="flex flex-col items-center justify-center p-2">
+              <Button 
+                key={columns} 
+                onClick={() => addSection(columns)} 
+                variant="outline" 
+                className="flex flex-col items-center justify-center p-2 h-16"
+              >
                 <SectionIcon columns={columns} />
-                <span className="mt-1">{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
+                <span className="mt-1 text-xs">{columns} {columns === 1 ? 'Columna' : 'Columnas'}</span>
               </Button>
             ))}
           </div>
