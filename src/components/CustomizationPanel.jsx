@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
@@ -18,8 +18,13 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
             value={formConfig.formType}
             onValueChange={(value) => updateFormConfig({ formType: value })}
           >
-            <Select.Option value="basic">Basic</Select.Option>
-            <Select.Option value="advanced">Advanced</Select.Option>
+            <SelectTrigger>
+              <SelectValue placeholder="Select form type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="basic">Basic</SelectItem>
+              <SelectItem value="advanced">Advanced</SelectItem>
+            </SelectContent>
           </Select>
         </div>
         <div>
@@ -28,8 +33,13 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
             value={formConfig.style}
             onValueChange={(value) => updateFormConfig({ style: value })}
           >
-            <Select.Option value="tailwind">Tailwind CSS</Select.Option>
-            <Select.Option value="bem">BEM</Select.Option>
+            <SelectTrigger>
+              <SelectValue placeholder="Select style" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tailwind">Tailwind CSS</SelectItem>
+              <SelectItem value="bem">BEM</SelectItem>
+            </SelectContent>
           </Select>
         </div>
         <div>
