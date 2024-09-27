@@ -95,8 +95,7 @@ export const generateFormCode = (formConfig) => {
             <div class="flex items-center">
               <button type="button" onclick="decrement('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-l' : 'formulario__boton-decremento'}">-</button>
               <input type="number" id="${fieldName}" name="${fieldName}" value="${value}" min="${min}" max="${max}" step="${step}" class="${className} text-center" ${requiredAttr}>
-              <button type="button" onclick="increment('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-r' : 'formul
-ario__boton-incremento'}">+</button>
+              <button type="button" onclick="increment('${fieldName}')" class="${style === 'tailwind' ? 'px-2 py-1 border rounded-r' : 'formulario__boton-incremento'}">+</button>
             </div>
             <script>
               function increment(id) {
