@@ -4,15 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { generateFormCode } from '../utils/formGenerator';
+import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('preview');
   const formCode = generateFormCode(formConfig);
+  const formCSS = formConfig.style === 'css' ? generateFormCSS(formConfig) : '';
 
   const copyCode = () => {
-    navigator.clipboard.writeText(formCode);
+    const codeToCopy = formConfig.style === 'css' ? `${formCode}\n\n${formCSS}` : formCode;
+    navigator.clipboard.writeText(codeToCopy);
     alert('Code copied to clipboard!');
   };
 
@@ -134,9 +136,24 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         </TabsContent>
         <TabsContent value="code">
           <div className="mt-4">
-            <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
-              <code>{formCode}</code>
-            </pre>
+            <Tabs defaultValue="html">
+              <TabsList>
+                <TabsTrigger value="html">HTML</TabsTrigger>
+                {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrigger>}
+              </TabsList>
+              <TabsContent value="html">
+                <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                  <code>{formCode}</code>
+                </pre>
+              </TabsContent>
+              {formConfig.style === 'css' && (
+                <TabsContent value="css">
+                  <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                    <code>{formCSS}</code>
+                  </pre>
+                </TabsContent>
+              )}
+            </Tabs>
             <Button onClick={copyCode} className="mt-4">
               Copy Code
             </Button>

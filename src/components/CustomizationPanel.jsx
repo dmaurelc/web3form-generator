@@ -2,6 +2,7 @@ import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Input, TextArea, Checkbox, Radio, File, Date, Number, Email, Password, Tel } from 'lucide-react';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   const addField = (type) => {
@@ -34,6 +35,20 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     updateFormConfig({ fields: items });
   };
 
+  const fieldTypes = [
+    { type: 'text', icon: Input },
+    { type: 'textarea', icon: TextArea },
+    { type: 'checkbox', icon: Checkbox },
+    { type: 'radio', icon: Radio },
+    { type: 'select', icon: Input },
+    { type: 'file', icon: File },
+    { type: 'date', icon: Date },
+    { type: 'number', icon: Number },
+    { type: 'email', icon: Email },
+    { type: 'password', icon: Password },
+    { type: 'tel', icon: Tel },
+  ];
+
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-xl font-semibold mb-4">Customize Your Form</h2>
@@ -64,7 +79,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="tailwind">Tailwind CSS</SelectItem>
-              <SelectItem value="bem">BEM</SelectItem>
+              <SelectItem value="css">CSS</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -73,16 +88,24 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="fields">
               {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-2 gap-2">
-                  {['text', 'email', 'password', 'number', 'textarea', 'select', 'radio', 'checkbox', 'date', 'file'].map((type, index) => (
-                    <Draggable key={type} draggableId={type} index={index}>
+                <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-3 gap-2">
+                  {fieldTypes.map((field, index) => (
+                    <Draggable key={field.type} draggableId={field.type} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
+                          className="flex items-center justify-center"
                         >
-                          <Button onClick={() => addField(type)}>{type}</Button>
+                          <Button
+                            onClick={() => addField(field.type)}
+                            className="w-full flex items-center justify-center space-x-2 py-2"
+                            variant="outline"
+                          >
+                            <field.icon className="w-4 h-4" />
+                            <span>{field.type}</span>
+                          </Button>
                         </div>
                       )}
                     </Draggable>
@@ -96,9 +119,9 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
         <div>
           <h3 className="text-lg font-medium mb-2">Add Sections</h3>
           <div className="grid grid-cols-3 gap-2">
-            <Button onClick={() => addSection(2)}>2 Columns</Button>
-            <Button onClick={() => addSection(3)}>3 Columns</Button>
-            <Button onClick={() => addSection(4)}>4 Columns</Button>
+            <Button onClick={() => addSection(2)} variant="outline">2 Columns</Button>
+            <Button onClick={() => addSection(3)} variant="outline">3 Columns</Button>
+            <Button onClick={() => addSection(4)} variant="outline">4 Columns</Button>
           </div>
         </div>
       </div>
