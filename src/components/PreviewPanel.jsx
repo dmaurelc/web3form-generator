@@ -130,7 +130,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     updateFormConfig({ fields: updatedFields });
   };
 
-  const handleLabelDoubleClick = (fieldId, currentLabel) => {
+  const handleLabelClick = (fieldId, currentLabel) => {
     setEditingLabel({ id: fieldId, label: currentLabel });
   };
 
@@ -149,7 +149,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
     const labelElement = (
       <Label
         htmlFor={field.id}
-        onDoubleClick={() => handleLabelDoubleClick(field.id, field.label)}
+        onClick={() => handleLabelClick(field.id, field.label)}
         className="cursor-pointer"
       >
         {editingLabel && editingLabel.id === field.id ? (
