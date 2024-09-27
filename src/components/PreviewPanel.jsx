@@ -424,7 +424,12 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 className="mb-8 p-4 border border-dashed border-gray-300 rounded-lg"
               >
                 {renderSectionControls(section)}
-                <div className={`grid ${section.columns === 1 ? 'grid-cols-1' : section.columns === 2 ? 'grid-cols-1 md:grid-cols-2' : section.columns === 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'} gap-4`}>
+                <div className={`grid grid-cols-1 ${
+                  section.columns === 1 ? 'md:grid-cols-1' :
+                  section.columns === 2 ? 'md:grid-cols-2' :
+                  section.columns === 3 ? 'md:grid-cols-3' :
+                  'md:grid-cols-4'
+                } gap-4`}>
                   {Array.from({ length: section.columns }).map((_, columnIndex) => (
                     <Droppable key={`${section.id}-${columnIndex}`} droppableId={`${section.id}-${columnIndex}`} type="FIELD">
                       {(provided) => (
@@ -456,9 +461,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 </div>
               </div>
             ))}
-            {!hasActiveFields && formConfig.fields.length === 0 && (
+            {!hasActiveFields && (
               <div className="text-center mt-4 p-8 bg-gray-100 rounded-lg">
-                <p className="text-lg font-medium text-gray-600">No hay campos activos en el formulario.</p>
+                <h2 className="text-2xl font-bold mb-4">Formulario Vacío</h2>
+                <p className="text-lg font-medium text-gray-600">No hay campos o columnas activas en el formulario.</p>
               </div>
             )}
           </div>
@@ -471,13 +477,13 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrigger>}
               </TabsList>
               <TabsContent value="html">
-                <div className="relative">
+                <div className="relative group">
                   <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
                     <code className="language-html">{formCode}</code>
                   </pre>
                   <Button
                     onClick={copiarCodigo}
-                    className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 hover:opacity-100"
+                    className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                   >
                     Copiar Código
                   </Button>
@@ -485,13 +491,13 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
               </TabsContent>
               {formConfig.style === 'css' && (
                 <TabsContent value="css">
-                  <div className="relative">
+                  <div className="relative group">
                     <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
                       <code className="language-css">{formCSS}</code>
                     </pre>
                     <Button
                       onClick={copiarCodigo}
-                      className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 hover:opacity-100"
+                      className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     >
                       Copiar Código
                     </Button>
