@@ -19,7 +19,7 @@ const FormBuilder = () => {
         <CustomizationPanel formConfig={formConfig} updateFormConfig={updateFormConfig} />
       </div>
       <div className="w-full md:w-2/3">
-        <PreviewPanel formConfig={formConfig} />
+        <PreviewPanel formConfig={formConfig} updateFormConfig={updateFormConfig} />
       </div>
     </div>
   );
