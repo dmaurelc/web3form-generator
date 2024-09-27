@@ -50,7 +50,7 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-4">Customize Your Form</h2>
       <div className="space-y-4">
         <div>
