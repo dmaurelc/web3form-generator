@@ -81,9 +81,7 @@ export const generateFormCode = (formConfig) => {
     </div>`
   ).join('');
 
-  const formH
-
-tml = `
+  const formHtml = `
     <form action="https://api.web3forms.com/submit" method="POST" class="${style === 'tailwind' ? 'space-y-6' : 'formulario'}">
       <input type="hidden" name="access_key" value="TU_CLAVE_DE_ACCESO_AQUI">
       ${formFields}
