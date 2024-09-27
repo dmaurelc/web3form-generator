@@ -424,7 +424,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 className="mb-8 p-4 border border-dashed border-gray-300 rounded-lg"
               >
                 {renderSectionControls(section)}
-                <div className={`grid grid-cols-1 sm:grid-cols-2 ${section.columns > 2 ? `md:grid-cols-${section.columns}` : ''} gap-4`}>
+                <div className={`grid ${section.columns === 1 ? 'grid-cols-1' : section.columns === 2 ? 'grid-cols-1 md:grid-cols-2' : section.columns === 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'} gap-4`}>
                   {Array.from({ length: section.columns }).map((_, columnIndex) => (
                     <Droppable key={`${section.id}-${columnIndex}`} droppableId={`${section.id}-${columnIndex}`} type="FIELD">
                       {(provided) => (
@@ -456,10 +456,9 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                 </div>
               </div>
             ))}
-            {!hasActiveFields && (
+            {!hasActiveFields && formConfig.fields.length === 0 && (
               <div className="text-center mt-4 p-8 bg-gray-100 rounded-lg">
                 <p className="text-lg font-medium text-gray-600">No hay campos activos en el formulario.</p>
-                <p className="text-sm text-gray-500 mt-2">Agrega un campo desde el panel de personalización para comenzar a crear tu formulario.</p>
               </div>
             )}
           </div>
