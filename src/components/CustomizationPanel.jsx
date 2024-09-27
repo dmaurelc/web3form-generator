@@ -40,22 +40,22 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
 
   const createField = (type) => {
     const baseNames = {
-      text: 'name',
-      email: 'email',
-      password: 'password',
-      number: 'number',
-      tel: 'phone',
-      textarea: 'message',
-      select: 'select',
-      checkbox: 'checkbox',
-      radio: 'radio',
-      file: 'file',
-      date: 'date',
-      button: 'button',
-      html: 'html',
-      slider: 'slider',
-      numberIncrement: 'numberIncrement',
-      rating: 'rating'
+      text: 'Texto',
+      email: 'Email',
+      password: 'Contraseña',
+      number: 'Número',
+      tel: 'Teléfono',
+      textarea: 'Área de texto',
+      select: 'Selección',
+      checkbox: 'Casilla',
+      radio: 'Radio',
+      file: 'Archivo',
+      date: 'Fecha',
+      button: 'Botón',
+      html: 'HTML',
+      slider: 'Slider',
+      numberIncrement: 'Incrementador',
+      rating: 'Calificación'
     };
 
     const baseName = baseNames[type] || type;
@@ -65,14 +65,14 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
     let counter = 1;
 
     while (existingNames.includes(newName)) {
-      newName = `${baseName}-${counter}`;
+      newName = `${baseName} ${counter}`;
       counter++;
     }
 
     return {
       id: `field_${Date.now()}`,
       type,
-      label: `Nuevo campo ${type}`,
+      label: baseName,
       name: newName,
       placeholder: '',
       required: false,

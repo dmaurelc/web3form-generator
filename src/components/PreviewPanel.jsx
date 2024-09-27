@@ -7,11 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateFormCode, generateFormCSS } from '../utils/formGenerator';
-import { Edit, ArrowUp, ArrowDown, Trash2, AlertCircle, Plus, Minus, Copy, Star } from 'lucide-react';
+import { Edit, ArrowUp, ArrowDown, Trash2, Copy, Star } from 'lucide-react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import SliderField from './SliderField';
 import NumberIncrementField from './NumberIncrementField';
 import { toast } from 'sonner';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('vista previa');
@@ -478,28 +480,36 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
               </TabsList>
               <TabsContent value="html">
                 <div className="relative group">
-                  <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                    <code className="language-html">{formCode}</code>
-                  </pre>
+                  <SyntaxHighlighter
+                    language="html"
+                    style={vscDarkPlus}
+                    className="rounded-lg p-4"
+                  >
+                    {formCode}
+                  </SyntaxHighlighter>
                   <Button
                     onClick={copiarCodigo}
-                    className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-blue-600"
                   >
-                    Copiar Código
+                    <Copy className="mr-2 h-4 w-4" /> Copiar Código
                   </Button>
                 </div>
               </TabsContent>
               {formConfig.style === 'css' && (
                 <TabsContent value="css">
                   <div className="relative group">
-                    <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                      <code className="language-css">{formCSS}</code>
-                    </pre>
+                    <SyntaxHighlighter
+                      language="css"
+                      style={vscDarkPlus}
+                      className="rounded-lg p-4"
+                    >
+                      {formCSS}
+                    </SyntaxHighlighter>
                     <Button
                       onClick={copiarCodigo}
-                      className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      className="absolute top-2 right-2 bg-blue-500 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-blue-600"
                     >
-                      Copiar Código
+                      <Copy className="mr-2 h-4 w-4" /> Copiar Código
                     </Button>
                   </div>
                 </TabsContent>
