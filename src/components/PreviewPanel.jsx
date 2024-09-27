@@ -326,7 +326,9 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(sectionId, columnIndex, field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeField(sectionId, columnIndex, field.id)}><Trash2 className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
+      {field.type !== 'button' && (
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateField(field.id, { required: !field.required })}><AlertCircle className="h-4 w-4" /></Button>
+      )}
       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => duplicateField(sectionId, columnIndex, field.id)}><Copy className="h-4 w-4" /></Button>
     </div>
   );
