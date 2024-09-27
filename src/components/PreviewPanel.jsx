@@ -131,22 +131,28 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className={`grid grid-cols-${field.columns} gap-4`}
+                className={`grid grid-cols-${field.columns} gap-4 border border-dashed border-gray-300 p-4 rounded-lg`}
               >
-                {field.fields.map((subField, index) => (
-                  <Draggable key={subField.id} draggableId={subField.id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="mb-4 p-2"
-                      >
-                        {renderField(subField)}
-                        {renderFieldControls(subField)}
-                      </div>
-                    )}
-                  </Draggable>
+                {Array.from({ length: field.columns }).map((_, colIndex) => (
+                  <div key={colIndex} className="border-r last:border-r-0 border-dashed border-gray-300 p-2">
+                    {field.fields
+                      .filter((_, index) => index % field.columns === colIndex)
+                      .map((subField, index) => (
+                        <Draggable key={subField.id} draggableId={subField.id} index={index}>
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="mb-4 p-2"
+                            >
+                              {renderField(subField)}
+                              {renderFieldControls(subField)}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                  </div>
                 ))}
                 {provided.placeholder}
               </div>
@@ -164,10 +170,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   };
 
   const renderFieldControls = (field) => (
-    <div className="mt-2 flex justify-end space-x-2">
+    <div className="mt-2 flex justify-end space-x-1">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" size="icon"><Edit className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -195,9 +201,9 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           </div>
         </DialogContent>
       </Dialog>
-      <Button variant="outline" size="icon" onClick={() => moveField(field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
-      <Button variant="outline" size="icon" onClick={() => moveField(field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
-      <Button variant="outline" size="icon" onClick={() => removeField(field.id)}><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => moveField(field.id, 'up')}><ArrowUp className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => moveField(field.id, 'down')}><ArrowDown className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" onClick={() => removeField(field.id)}><Trash2 className="h-4 w-4" /></Button>
     </div>
   );
 
