@@ -202,9 +202,10 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           right: 'text-right',
           'full-width': 'w-full',
         }[field.alignment || 'left'];
+        const fullWidthClass = field.fullWidth ? 'w-full' : '';
         return (
           <div className={`mb-4 ${alignmentClass}`}>
-            <Button>{field.label}</Button>
+            <Button className={fullWidthClass}>{field.label}</Button>
           </div>
         );
       case 'html':
@@ -258,23 +259,33 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
               </div>
             )}
             {field.type === 'button' && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="alignment">Alineación</Label>
-                <Select
-                  value={field.alignment || 'left'}
-                  onValueChange={(value) => updateField(field.id, { alignment: value })}
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Selecciona la alineación" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="left">Izquierda</SelectItem>
-                    <SelectItem value="center">Centrado</SelectItem>
-                    <SelectItem value="right">Derecha</SelectItem>
-                    <SelectItem value="full-width">Ancho completo</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="alignment">Alineación</Label>
+                  <Select
+                    value={field.alignment || 'left'}
+                    onValueChange={(value) => updateField(field.id, { alignment: value })}
+                  >
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Selecciona la alineación" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">Izquierda</SelectItem>
+                      <SelectItem value="center">Centrado</SelectItem>
+                      <SelectItem value="right">Derecha</SelectItem>
+                      <SelectItem value="full-width">Ancho completo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="fullWidth"
+                    checked={field.fullWidth}
+                    onCheckedChange={(checked) => updateField(field.id, { fullWidth: checked })}
+                  />
+                  <Label htmlFor="fullWidth">Ancho completo</Label>
+                </div>
+              </>
             )}
           </div>
         </DialogContent>
