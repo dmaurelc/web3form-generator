@@ -18,12 +18,13 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 const PreviewPanel = ({ formConfig, updateFormConfig }) => {
   const [activeTab, setActiveTab] = useState('preview');
   const [editingLabel, setEditingLabel] = useState(null);
+  const [activeCodeTab, setActiveCodeTab] = useState('html');
 
   const formCode = generateFormCode(formConfig);
   const formCSS = formConfig.style === 'css' ? generateFormCSS(formConfig) : '';
 
   const copyCode = () => {
-    const codeToCopy = formConfig.style === 'css' ? `${formCode}\n\n${formCSS}` : formCode;
+    const codeToCopy = activeCodeTab === 'html' ? formCode : formCSS;
     navigator.clipboard.writeText(codeToCopy);
     toast.success('Code copied to clipboard!');
   };
@@ -223,6 +224,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
                     id={`${field.id}_${index}`}
                     name={field.id}
                     value={option.value}
+                    className="mr-2"
                   />
                   <Label htmlFor={`${field.id}_${index}`} className="ml-2">
                     {option.label}
@@ -471,7 +473,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
         </TabsContent>
         <TabsContent value="code">
           <div className="mt-4 relative">
-            <Tabs defaultValue="html">
+            <Tabs defaultValue="html" onValueChange={setActiveCodeTab}>
               <TabsList>
                 <TabsTrigger value="html">HTML</TabsTrigger>
                 {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrigger>}

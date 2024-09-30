@@ -3,7 +3,7 @@ export const generateFormCode = (formConfig) => {
 
   const generateFieldHtml = (field, index) => {
     const { type, label, name, placeholder, required, content, min, max, step, value, options } = field;
-    const className = style === 'tailwind' ? 'w-full mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `form__${type}`;
+    const className = style === 'tailwind' ? 'mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : `form__${type}`;
     const requiredAttr = required ? 'required' : '';
     const fieldName = generateUniqueName(name, index);
     
@@ -17,21 +17,21 @@ export const generateFormCode = (formConfig) => {
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'form__group'}">
             <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'form__label'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
-            <input type="${type}" id="${fieldName}" name="${fieldName}" placeholder="${placeholder}" class="${className}" ${requiredAttr}>
+            <input type="${type}" id="${fieldName}" name="${fieldName}" placeholder="${placeholder}" class="${className} w-full" ${requiredAttr}>
           </div>
         `;
       case 'textarea':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'form__group'}">
             <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'form__label'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
-            <textarea id="${fieldName}" name="${fieldName}" rows="3" class="${className}" placeholder="${placeholder}" ${requiredAttr}></textarea>
+            <textarea id="${fieldName}" name="${fieldName}" rows="3" class="${className} w-full" placeholder="${placeholder}" ${requiredAttr}></textarea>
           </div>
         `;
       case 'select':
         return `
           <div class="${style === 'tailwind' ? 'mb-4' : 'form__group'}">
             <label for="${fieldName}" class="${style === 'tailwind' ? 'block text-sm font-medium text-gray-700' : 'form__label'}">${label}${required ? ' <span class="text-red-500">*</span>' : ''}</label>
-            <select id="${fieldName}" name="${fieldName}" class="${className}" ${requiredAttr}>
+            <select id="${fieldName}" name="${fieldName}" class="${className} w-full" ${requiredAttr}>
               <option value="">Select an option</option>
               ${options.map(option => `<option value="${option.value}">${option.label}</option>`).join('\n')}
             </select>
