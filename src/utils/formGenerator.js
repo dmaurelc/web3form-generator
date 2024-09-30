@@ -145,14 +145,92 @@ export const generateFormCode = (formConfig) => {
 export const generateFormCSS = (formConfig) => {
   return `
     .form {
-      max-width: 64rem; /* equivalent to max-w-4xl */
+      max-width: 64rem;
       margin: 0 auto;
-      padding: 1.5rem; /* equivalent to p-6 */
+      padding: 1.5rem;
       background-color: #ffffff;
-      border: 1px solid #d1d5db; /* equivalent to border-gray-300 */
-      border-radius: 0.375rem; /* equivalent to rounded-md */
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
     }
 
-    /* ... (keep the rest of the CSS unchanged) */
+    .form__group {
+      margin-bottom: 1rem;
+    }
+
+    .form__label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .form__input,
+    .form__textarea,
+    .form__select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+    }
+
+    .form__input:focus,
+    .form__textarea:focus,
+    .form__select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form__checkbox,
+    .form__radio {
+      margin-right: 0.5rem;
+    }
+
+    .form__button {
+      background-color: #3b82f6;
+      color: #ffffff;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .form__button:hover {
+      background-color: #2563eb;
+    }
+
+    .form__section {
+      margin-bottom: 1.5rem;
+    }
+
+    .form__section--2-columns {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .form__section--3-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .form__section--4-columns {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .form__section--2-columns,
+      .form__section--3-columns,
+      .form__section--4-columns {
+        grid-template-columns: 1fr;
+      }
+    }
   `;
 };
