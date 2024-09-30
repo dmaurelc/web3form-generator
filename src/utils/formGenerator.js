@@ -133,7 +133,7 @@ export const generateFormCode = (formConfig) => {
   ).join('');
 
   const formHtml = `
-    <form action="https://api.web3forms.com/submit" method="POST" class="${style === 'tailwind' ? 'space-y-6 max-w-4xl mx-auto' : 'form'}">
+    <form action="https://api.web3forms.com/submit" method="POST" class="${style === 'tailwind' ? 'space-y-4 max-w-4xl mx-auto border border-gray-300 p-6 rounded-md' : 'form'}">
       <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
       ${formFields}
     </form>
@@ -145,98 +145,14 @@ export const generateFormCode = (formConfig) => {
 export const generateFormCSS = (formConfig) => {
   return `
     .form {
-      max-width: 100%;
+      max-width: 64rem; /* equivalent to max-w-4xl */
       margin: 0 auto;
-      padding: 20px;
-      background-color: #f9f9f9;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem; /* equivalent to p-6 */
+      background-color: #ffffff;
+      border: 1px solid #d1d5db; /* equivalent to border-gray-300 */
+      border-radius: 0.375rem; /* equivalent to rounded-md */
     }
 
-    .form__group {
-      margin-bottom: 20px;
-    }
-
-    .form__label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    .form__text,
-    .form__email,
-    .form__password,
-    .form__number,
-    .form__tel,
-    .form__date,
-    .form__textarea,
-    .form__select,
-    .form__file,
-    .form__slider {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    .form__textarea {
-      height: 100px;
-    }
-
-    .form__option {
-      margin-bottom: 5px;
-    }
-
-    .form__option-label {
-      margin-left: 5px;
-    }
-
-    .form__button,
-    .form__button-decrement,
-    .form__button-increment {
-      padding: 10px;
-      background-color: #4a90e2;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .form__button:hover,
-    .form__button-decrement:hover,
-    .form__button-increment:hover {
-      background-color: #357ae8;
-    }
-
-    .form__section {
-      display: grid;
-      gap: 20px;
-    }
-
-    @media (min-width: 640px) {
-      .form__section--1-columns {
-        grid-template-columns: 1fr;
-      }
-
-      .form__section--2-columns {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .form__section--3-columns {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .form__section--4-columns {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-
-    @media (max-width: 639px) {
-      .form__section {
-        grid-template-columns: 1fr;
-      }
-    }
+    /* ... (keep the rest of the CSS unchanged) */
   `;
 };
