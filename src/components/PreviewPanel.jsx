@@ -158,7 +158,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       <Label
         htmlFor={field.id}
         onClick={() => handleLabelClick(field.id, field.label)}
-        className="cursor-pointer"
+        className="cursor-pointer mb-1 block font-medium text-sm text-gray-700"
       >
         {editingLabel && editingLabel.id === field.id ? (
           <Input
@@ -168,9 +168,19 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             autoFocus
           />
         ) : (
-          field.label
+          <>
+            {field.label}
+            {field.required && <span className="text-red-500 ml-1">*</span>}
+          </>
         )}
       </Label>
+    );
+
+    const fieldWrapper = (content) => (
+      <div className="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+        {labelElement}
+        {content}
+      </div>
     );
 
     switch (field.type) {
@@ -180,66 +190,56 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
       case 'number':
       case 'tel':
       case 'date':
-        return (
-          <div className="mb-4">
-            {labelElement}
-            <Input type={field.type} id={field.id} placeholder={field.placeholder} />
-          </div>
+        return fieldWrapper(
+          <Input type={field.type} id={field.id} placeholder={field.placeholder} className="w-full mt-1" />
         );
       case 'textarea':
-        return (
-          <div className="mb-4">
-            {labelElement}
-            <textarea
-              id={field.id}
-              placeholder={field.placeholder}
-              className="w-full p-2 border rounded"
-            ></textarea>
-          </div>
+        return fieldWrapper(
+          <textarea
+            id={field.id}
+            placeholder={field.placeholder}
+            className="w-full mt-1 p-2 border rounded-md"
+            rows="3"
+          ></textarea>
         );
       case 'select':
-        return (
-          <div className="mb-4">
-            {labelElement}
-            <select id={field.id} className="w-full p-2 border rounded">
-              <option value="">Select an option</option>
+        return fieldWrapper(
+          <Select>
+            <SelectTrigger className="w-full mt-1">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
               {field.options.map((option, index) => (
-                <option key={index} value={option.value}>
+                <SelectItem key={index} value={option.value}>
                   {option.label}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-          </div>
+            </SelectContent>
+          </Select>
         );
       case 'checkbox':
       case 'radio':
-        return (
-          <div className="mb-4">
-            <fieldset>
-              <legend>{labelElement}</legend>
-              {field.options.map((option, index) => (
-                <div key={index} className="flex items-center">
-                  <input
-                    type={field.type}
-                    id={`${field.id}_${index}`}
-                    name={field.id}
-                    value={option.value}
-                    className="mr-2"
-                  />
-                  <Label htmlFor={`${field.id}_${index}`} className="ml-2">
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </fieldset>
+        return fieldWrapper(
+          <div className="mt-2 space-y-2">
+            {field.options.map((option, index) => (
+              <div key={index} className="flex items-center">
+                <input
+                  type={field.type}
+                  id={`${field.id}_${index}`}
+                  name={field.id}
+                  value={option.value}
+                  className="mr-2"
+                />
+                <Label htmlFor={`${field.id}_${index}`} className="text-sm text-gray-700">
+                  {option.label}
+                </Label>
+              </div>
+            ))}
           </div>
         );
       case 'file':
-        return (
-          <div className="mb-4">
-            {labelElement}
-            <Input type="file" id={field.id} />
-          </div>
+        return fieldWrapper(
+          <Input type="file" id={field.id} className="w-full mt-1" />
         );
       case 'button':
         const alignmentClass = {
@@ -258,22 +258,23 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
           <div className="mb-4" dangerouslySetInnerHTML={{ __html: field.content }}></div>
         );
       case 'slider':
-        return <SliderField field={field} updateField={updateField} />;
+        return fieldWrapper(
+          <SliderField field={field} updateField={updateField} />
+        );
       case 'numberIncrement':
-        return <NumberIncrementField field={field} updateField={updateField} />;
+        return fieldWrapper(
+          <NumberIncrementField field={field} updateField={updateField} />
+        );
       case 'rating':
-        return (
-          <div className="mb-4">
-            {labelElement}
-            <div className="flex items-center">
-              {[...Array(field.maxRating)].map((_, index) => (
-                <Star
-                  key={index}
-                  className={`h-6 w-6 ${index < field.value ? 'text-yellow-400' : 'text-gray-300'}`}
-                  onClick={() => updateField(field.id, { value: index + 1 })}
-                />
-              ))}
-            </div>
+        return fieldWrapper(
+          <div className="flex items-center mt-1">
+            {[...Array(field.maxRating)].map((_, index) => (
+              <Star
+                key={index}
+                className={`h-6 w-6 ${index < field.value ? 'text-yellow-400' : 'text-gray-300'}`}
+                onClick={() => updateField(field.id, { value: index + 1 })}
+              />
+            ))}
           </div>
         );
       default:
