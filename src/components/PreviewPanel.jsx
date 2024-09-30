@@ -476,7 +476,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             <Tabs defaultValue="html" onValueChange={setActiveCodeTab}>
               <TabsList>
                 <TabsTrigger value="html">HTML</TabsTrigger>
-                {formConfig.style === 'css' && <TabsTrigger value="css">CSS</TabsTrigger>}
+                {formConfig.style === 'css' && <TabsTrigger value="css">CSS Vanilla</TabsTrigger>}
               </TabsList>
               <TabsContent value="html">
                 <div className="relative group">

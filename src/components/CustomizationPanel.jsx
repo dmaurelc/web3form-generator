@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { TextIcon, AlignJustify, CheckSquare, Radio, FileText, CalendarIcon, Hash, Mail, Lock, Phone, Type, Code, Sliders, PlusSquare, Star } from 'lucide-react';
 import SectionIcon from './SectionIcon';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   const addSection = (columns = 1) => {
@@ -122,38 +123,42 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">Customize Your Form</h2>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Form Type</label>
-          <Select
-            value={formConfig.formType}
-            onValueChange={(value) => updateFormConfig({ formType: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select form type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="basic">Basic</SelectItem>
-              <SelectItem value="advanced">Advanced</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Style</label>
-          <Select
-            value={formConfig.style}
-            onValueChange={(value) => updateFormConfig({ style: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select style" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="tailwind">Tailwind CSS</SelectItem>
-              <SelectItem value="css">CSS</SelectItem>
-            </SelectContent>
-          </Select>
+    <Card className="bg-white rounded-lg shadow">
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">Customize Your Form</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Form Type</label>
+            <Select
+              value={formConfig.formType}
+              onValueChange={(value) => updateFormConfig({ formType: value })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select form type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="basic">Basic</SelectItem>
+                <SelectItem value="advanced">Advanced</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Style</label>
+            <Select
+              value={formConfig.style}
+              onValueChange={(value) => updateFormConfig({ style: value })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select style" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tailwind">Tailwind CSS</SelectItem>
+                <SelectItem value="css">CSS Vanilla</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <div>
           <h3 className="text-lg font-medium mb-2">Fields</h3>
@@ -193,8 +198,8 @@ const CustomizationPanel = ({ formConfig, updateFormConfig }) => {
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
