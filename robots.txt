@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://web3forms-generator.netlify.app/sitemap.xml
