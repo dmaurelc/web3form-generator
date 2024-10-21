@@ -210,7 +210,7 @@ const PreviewPanel = ({ formConfig, updateFormConfig }) => {
             </SelectTrigger>
             <SelectContent>
               {field.options.map((option, index) => (
-                <SelectItem key={index} value={option.value}>
+                <SelectItem key={index} value={option.value || `option-${index + 1}`}>
                   {option.label}
                 </SelectItem>
               ))}
